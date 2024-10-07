@@ -49,6 +49,12 @@ namespace InterportCargoWPF.Views
             // Simulate submitting the quotation
             MessageBox.Show(
                 $"Quotation submitted:\nSource: {origin}\nDestination: {destination}\nCargo Type: {cargoType}\nContainers: {containerQuantity}\nDate: {formattedDate}\nAdditional Requirements: {additionalRequirements}");
+
+            // Get the main window instance
+            var mainWindow = MainWindow.Instance;
+
+            mainWindow.Show();
+            this.Close();
         }
 
 

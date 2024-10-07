@@ -9,11 +9,13 @@
             <TextBlock Text="INTERPORT CARGO" VerticalAlignment="Center" 
                        HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" 
                        Margin="10,0,0,0"/>
-            
         </Grid>
 
-        <!-- Main Login Form -->
-        <Border HorizontalAlignment="Center" VerticalAlignment="Center" 
+        <!-- Frame for navigation (Initially hidden, but shown after login) -->
+        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed"/>
+
+        <!-- Main Login Form (Initially visible) -->
+        <Border x:Name="LoginForm" HorizontalAlignment="Center" VerticalAlignment="Center" 
                 Padding="30" Width="400" Height="500">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
                 <TextBlock Text="LOG IN" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0, 0, 0, 20"/>

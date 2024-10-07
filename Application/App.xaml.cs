@@ -1,4 +1,7 @@
-﻿namespace InterportCargoWPF.Application
+﻿using System.Windows;
+using System.Windows.Controls;
+
+namespace InterportCargoWPF.Application
 {
     /// <summary>
     /// Interaction logic for App.xaml

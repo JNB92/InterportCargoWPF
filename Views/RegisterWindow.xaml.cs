@@ -30,9 +30,12 @@ namespace InterportCargoWPF.Views
                 MessageBox.Show("All fields are required.");
                 return;
             }
+
+            // Hash the password
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
-            // Pass the required parameters when creating a new Customer
-            var newCustomer = new Customer(firstName, lastName, email, phoneNumber, password);
+
+            // Pass the hashed password to the Customer object
+            var newCustomer = new Customer(firstName, lastName, email, phoneNumber, hashedPassword);
 
             // Save the new customer to the database (using Entity Framework)
             using (var context = new AppDbContext())
@@ -60,7 +63,7 @@ namespace InterportCargoWPF.Views
         {
             var mainWindow = new MainWindow();
             mainWindow.Show();
-            this.Close();  // Close the current registration window
+            this.Close(); 
         }
     }
 }

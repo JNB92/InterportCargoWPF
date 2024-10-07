@@ -1,7 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Linq;  // Don't forget to include this for LINQ queries
 using InterportCargoWPF.Database;
 using InterportCargoWPF.Models;
+
 
 namespace InterportCargoWPF.Views
 {
@@ -10,9 +12,11 @@ namespace InterportCargoWPF.Views
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static MainWindow Instance { get; private set; }
         public MainWindow()
         {
             InitializeComponent();
+            Instance = this;
         }
 
         private void OpenRegisterWindow_Click(object sender, RoutedEventArgs e)
@@ -22,27 +26,32 @@ namespace InterportCargoWPF.Views
             this.Close();
         }
 
-        // private void OpenLoginWindow_Click(object sender, RoutedEventArgs e)
-        // {
-        //     LoginWindow loginWindow = new LoginWindow();
-        //     loginWindow.Show();
-        //     this.Close();
-        // }
-
         public void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             string email = EmailBox.Text;
-            string password = PasswordBox.Password;
+            string enteredPassword = PasswordBox.Password;
 
             using (var context = new AppDbContext())
             {
-                var customer = context.Customers
-                    .FirstOrDefault(c => c.Email == email && c.Password == password);
+                // First, check if the customer exists in the database
+                var customer = context.Customers.FirstOrDefault(c => c.Email == email);
 
                 if (customer != null)
                 {
-                    MessageBox.Show($"Login successful! Welcome, {customer.FirstName}.");
-                    LoginSuccessful(this,new RoutedEventArgs());
+                    // If the customer exists, verify the entered password against the stored hashed password
+                    bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(enteredPassword, customer.Password);
+
+                    if (isPasswordCorrect)
+                    {
+                        MessageBox.Show($"Login successful! Welcome, {customer.FirstName}.");
+
+                        // Navigate to the landing page on successful login
+                        LoginSuccessful();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Invalid password.");
+                    }
                 }
                 else
                 {
@@ -51,11 +60,14 @@ namespace InterportCargoWPF.Views
             }
         }
 
-        public void LoginSuccessful(object sender, RoutedEventArgs e)
+        public void LoginSuccessful()
         {
-            var quotationWindow = new QuotationWindow();
-            quotationWindow.Show();
-            this.Close();
+            // Hide the login form and show the frame
+            LoginForm.Visibility = Visibility.Collapsed;
+            MainFrame.Visibility = Visibility.Visible;
+
+            // Navigate to the landing page on successful login
+            MainFrame.NavigationService.Navigate(new LandingPage());
         }
     }
 }

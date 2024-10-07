@@ -1,17 +1,15 @@
-﻿using InterportCargoWPF.Data;
-using System;
-using System.Windows;
+﻿using System.Windows;
 
 namespace InterportCargoWPF
 {
     /// <summary>
     /// Interaction logic for RegisterWindow.xaml
     /// </summary>
-    public partial class RegisterWindow : Window
+    public partial class RegisterWindow
     {
         public RegisterWindow()
         {
-            InitializeComponent();  // This links to your XAML UI
+            InitializeComponent(); 
         }
 
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
@@ -47,7 +45,7 @@ namespace InterportCargoWPF
         {
             RegisterWindow registerWindow = new RegisterWindow();
             registerWindow.Show();
-            this.Close(); // Optional: Close the current window
+            this.Close(); 
         }
 
 

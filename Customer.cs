@@ -1,4 +1,6 @@
-﻿public class Customer
+﻿using InterportCargoWPF;
+
+public class Customer
 {
     public int Id { get; set; }
     public string FirstName { get; set; }
@@ -7,7 +9,15 @@
     public string PhoneNumber { get; set; }
     public string Password { get; set; }
 
-    public Customer(string firstName, string lastName, string email, string phoneNumber, string password)
+    // Navigation property for related Quotations
+    public ICollection<Quotation> Quotations { get; set; }
+
+    public Customer() 
+    {
+        Quotations = new List<Quotation>();
+    }
+
+    public Customer(string firstName, string lastName, string email, string phoneNumber, string password) : this()
     {
         FirstName = firstName;
         LastName = lastName;

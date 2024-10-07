@@ -1,12 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 
-namespace InterportCargoWPF.Data
+namespace InterportCargoWPF
 {
     public class AppDbContext : DbContext
     {
@@ -17,7 +11,7 @@ namespace InterportCargoWPF.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // This sets the SQLite database file path
-            optionsBuilder.UseSqlite("Data Source=interportcargo.db");
+            optionsBuilder.UseSqlite(@"Data Source=C:\Users\61414\RiderProjects\InterportCargoWPF\interportcargo.db");
         }
     }
 }

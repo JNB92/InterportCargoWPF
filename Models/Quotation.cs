@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace InterportCargoWPF
+namespace InterportCargoWPF.Models
 {
     public class Quotation
     {
@@ -12,7 +12,6 @@ namespace InterportCargoWPF
         public string NatureOfJob { get; set; }
 
         // Navigation property to link the quotation with a customer
-        [ForeignKey("CustomerId")]
-        public Customer Customer { get; set; }
+        [ForeignKey("CustomerId")] public Customer Customer { get; set; }
     }
 }

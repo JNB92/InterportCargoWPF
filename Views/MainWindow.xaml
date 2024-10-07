@@ -1,0 +1,45 @@
+﻿<Window x:Class="InterportCargoWPF.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Interport Cargo" Height="650" Width="800">
+    
+    <Grid>
+        <!-- Header -->
+        <Grid VerticalAlignment="Top" Height="50" Background="#E0E0E0">
+            <TextBlock Text="INTERPORT CARGO" VerticalAlignment="Center" 
+                       HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" 
+                       Margin="10,0,0,0"/>
+            
+        </Grid>
+
+        <!-- Main Login Form -->
+        <Border HorizontalAlignment="Center" VerticalAlignment="Center" 
+                Padding="30" Width="400" Height="500">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
+                <TextBlock Text="LOG IN" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0, 0, 0, 20"/>
+                
+                <!-- Email Input -->
+                <TextBlock Text="Email" FontWeight="Bold" Margin="0, 0, 0, 5"/>
+                <TextBox Name="EmailBox" Width="250" Height="30" Margin="0, 0, 0, 20"/>
+                
+                <!-- Password Input -->
+                <TextBlock Text="Password" FontWeight="Bold" Margin="0, 0, 0, 5"/>
+                <PasswordBox Name="PasswordBox" Width="250" Height="30" Margin="0, 0, 0, 20"/>
+
+                <!-- Login Button -->
+                <Button Content="Log In" Background="Black" Foreground="White" Width="250" Height="40" 
+                        Click="LoginButton_Click"/>
+                
+                <!-- Register Option -->
+                <Button Content="Register" Width="250" Height="30" Margin="0,10,0,0"
+                        Click="OpenRegisterWindow_Click"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Footer -->
+        <Grid VerticalAlignment="Bottom" Height="50" Background="#E0E0E0">
+            <TextBlock Text="InterportCargo© 2024" VerticalAlignment="Center" 
+                       HorizontalAlignment="Center" FontSize="10"/>
+        </Grid>
+    </Grid>
+</Window>

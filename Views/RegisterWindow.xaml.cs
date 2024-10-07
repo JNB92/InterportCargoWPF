@@ -1,6 +1,9 @@
 ﻿using System.Windows;
+using InterportCargoWPF.Database;
+using InterportCargoWPF.Models;
+using BCrypt.Net;
 
-namespace InterportCargoWPF
+namespace InterportCargoWPF.Views
 {
     /// <summary>
     /// Interaction logic for RegisterWindow.xaml
@@ -9,7 +12,7 @@ namespace InterportCargoWPF
     {
         public RegisterWindow()
         {
-            InitializeComponent(); 
+            InitializeComponent();
         }
 
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
@@ -27,27 +30,37 @@ namespace InterportCargoWPF
                 MessageBox.Show("All fields are required.");
                 return;
             }
-
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
             // Pass the required parameters when creating a new Customer
             var newCustomer = new Customer(firstName, lastName, email, phoneNumber, password);
 
             // Save the new customer to the database (using Entity Framework)
             using (var context = new AppDbContext())
             {
-                context.Customers.Add(newCustomer);
-                context.SaveChanges();
+                // Check if the customer already exists
+                var existingCustomer = context.Customers.SingleOrDefault(c => c.Email == email);
+                if (existingCustomer == null)
+                {
+                    context.Customers.Add(newCustomer);
+                    context.SaveChanges();
+
+                    MessageBox.Show("Registration successful!");
+
+                    // After successful registration, return to the login window
+                    ReturnToLogin_Click(this, new RoutedEventArgs());
+                }
+                else
+                {
+                    MessageBox.Show("A customer with this email already exists.");
+                }
             }
-
-            MessageBox.Show("Registration successful!");
         }
 
-        private void OpenRegisterWindow_Click(object sender, RoutedEventArgs e)
+        private void ReturnToLogin_Click(object sender, RoutedEventArgs e)
         {
-            RegisterWindow registerWindow = new RegisterWindow();
-            registerWindow.Show();
-            this.Close(); 
+            var mainWindow = new MainWindow();
+            mainWindow.Show();
+            this.Close();  // Close the current registration window
         }
-
-
     }
 }

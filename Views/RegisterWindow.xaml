@@ -1,0 +1,41 @@
+﻿<Window x:Class="InterportCargoWPF.Views.RegisterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Register" Height="650" Width="800">
+    
+    <Grid>
+        <!-- Header -->
+        <Grid VerticalAlignment="Top" Height="50" Background="#E0E0E0">
+            <TextBlock Text="INTERPORT CARGO" VerticalAlignment="Center" 
+                       HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" 
+                       Margin="10,0,0,0"/>
+        </Grid>
+    
+        <Border HorizontalAlignment="Center" VerticalAlignment="Center" 
+                Padding="30" Width="400" Height="500">
+            <StackPanel Margin="10">
+                <Label Content="First Name" />
+                <TextBox x:Name="FirstNameBox"/>
+
+                <Label Content="Last Name" />
+                <TextBox x:Name="LastNameBox" />
+
+                <Label Content="Email" />
+                <TextBox x:Name="EmailBox" />
+
+                <Label Content="Phone Number" />
+                <TextBox x:Name="PhoneNumberBox"/>
+
+                <Label Content="Password" />
+                <PasswordBox x:Name="PasswordBox" />
+
+                <Button Content="Register" Click="RegisterButton_Click" Background="Black" Foreground="White" Width="250" Height="40" />
+                <Button Content="Return to Login" Click="ReturnToLogin_Click" />
+            </StackPanel>
+        </Border>
+            <Grid VerticalAlignment="Bottom" Height="50" Background="#E0E0E0">
+                <TextBlock Text="InterportCargo© 2024" VerticalAlignment="Center" 
+                           HorizontalAlignment="Center" FontSize="10"/>
+            </Grid>
+    </Grid>
+</Window>

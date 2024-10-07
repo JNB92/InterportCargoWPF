@@ -1,4 +1,4 @@
-﻿using InterportCargoWPF;
+﻿namespace InterportCargoWPF.Models;
 
 public class Customer
 {
@@ -12,7 +12,7 @@ public class Customer
     // Navigation property for related Quotations
     public ICollection<Quotation> Quotations { get; set; }
 
-    public Customer() 
+    public Customer()
     {
         Quotations = new List<Quotation>();
     }

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Linq;
 using InterportCargoWPF.Database;
@@ -8,9 +9,13 @@ namespace InterportCargoWPF.Views
 {
     public partial class QuotationPage : Page
     {
-        public QuotationPage()
+        private int _loggedInCustomerId;
+        
+
+        public QuotationPage(int loggedInCustomerId) // Pass logged-in customer ID
         {
             InitializeComponent();
+            _loggedInCustomerId = loggedInCustomerId; // Store the customer ID for later use
         }
 
         private void SubmitQuotation_Click(object sender, RoutedEventArgs e)
@@ -42,14 +47,44 @@ namespace InterportCargoWPF.Views
                 return;
             }
 
-            // Process transportation date
-            string formattedDate = selectedDate.Value.ToShortDateString();
+            // Validate that a valid customer ID is available
+            if (_loggedInCustomerId <= 0)
+            {
+                MessageBox.Show("Customer ID is not valid. Please log in again.");
+                return;
+            }
 
-            // Simulate submitting the quotation
-            MessageBox.Show(
-                $"Quotation submitted:\nSource: {origin}\nDestination: {destination}\nCargo Type: {cargoType}\nContainers: {containerQuantity}\nDate: {formattedDate}\nAdditional Requirements: {additionalRequirements}");
+            // Create a new Quotation object
+            var newQuotation = new Quotation
+            {
+                Origin = origin,
+                Destination = destination,
+                CargoType = cargoType,
+                ContainerQuantity = containerQuantity,
+                NatureOfJob = additionalRequirements,
+                TransportationDate = selectedDate.Value,
+                CustomerId = _loggedInCustomerId // Assign the logged-in customer's ID
+            };
 
-            // Navigate back to the main page or any other target page
+            // Save the quotation to the database
+            using (var context = new AppDbContext())
+            {
+                // Verify if the customer exists
+                var customerExists = context.Customers.Any(c => c.Id == _loggedInCustomerId);
+                if (!customerExists)
+                {
+                    MessageBox.Show("Selected customer does not exist. Please log in with a valid account.");
+                    return;
+                }
+
+                context.Quotations.Add(newQuotation);
+                context.SaveChanges();
+            }
+
+            // Confirm submission
+            MessageBox.Show("Quotation successfully submitted!");
+
+            // Navigate back to the main page or another target page
             NavigationService?.Navigate(new MainWindow());
         }
 

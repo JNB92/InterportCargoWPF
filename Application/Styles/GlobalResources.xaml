@@ -3,40 +3,103 @@
                     xmlns:interportCargoWpf="clr-namespace:InterportCargoWPF"
                     xmlns:views="clr-namespace:InterportCargoWPF.Views">
  
-    <!-- Define Window Style -->
-    <Style TargetType="views:MainWindow" >
-        <Setter Property="Background" Value="Lime" />
-    </Style>
-   
-    <Style TargetType="views:RegisterPage" >
-        <Setter Property="Background" Value="Lime" />
-    </Style>
-    
-    <Style TargetType="views:QuotationPage" >
-        <Setter Property="Background" Value="Lime" />
+    <!-- Define General Window/Page Styles -->
+    <Style TargetType="Page">
+        <Setter Property="Background" Value="#F5F5F5" />
     </Style>
 
+    <Style TargetType="views:MainWindow">
+        <Setter Property="Background" Value="#F5F5F5" />
+    </Style>
 
-    <!-- Define Button Style -->
+    <!-- Define Header Text Style -->
+    <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="#007ACC" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="10,20,10,20" />
+    </Style>
+
+    <!-- Define Button Style with Rounded Corners and Hover Effects -->
     <Style TargetType="Button">
-        <Setter Property="Background" Value="LightBlue" />
+        <Setter Property="Background" Value="#007ACC" />
+        <Setter Property="Foreground" Value="White" />
         <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Padding" Value="5,2" />
         <Setter Property="Margin" Value="0,10,0,0" />
         <Setter Property="Width" Value="250" />
-        <Setter Property="Height" Value="30" />
-        
+        <Setter Property="Height" Value="35" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#005F9E" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#004572" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <!-- Define TextBox Style -->
     <Style TargetType="TextBox">
         <Setter Property="FontSize" Value="14" />
-        <Setter Property="Padding" Value="3" />
+        <Setter Property="Padding" Value="5" />
         <Setter Property="Height" Value="30" />
+        <Setter Property="BorderBrush" Value="#D3D3D3" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Margin" Value="0,5,0,15" />
+        <Setter Property="Background" Value="White" />
     </Style>
     
+    <!-- Define PasswordBox Style -->
     <Style TargetType="PasswordBox">
         <Setter Property="FontSize" Value="14" />
-        <Setter Property="Padding" Value="3" />
+        <Setter Property="Padding" Value="5" />
         <Setter Property="Height" Value="30" />
+        <Setter Property="BorderBrush" Value="#D3D3D3" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Margin" Value="0,5,0,15" />
+        <Setter Property="Background" Value="White" />
+    </Style>
+
+    <!-- Define DataGrid Style -->
+    <Style TargetType="DataGrid">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="RowBackground" Value="White" />
+        <Setter Property="AlternatingRowBackground" Value="#F0F8FF" />
+        <Setter Property="BorderBrush" Value="#D3D3D3" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="ColumnHeaderHeight" Value="40" />
+        <Setter Property="RowHeight" Value="40" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="Black" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="GridLinesVisibility" Value="None" />
+        <Setter Property="ColumnHeaderStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="#007ACC" />
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="FontWeight" Value="Bold" />
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="FontSize" Value="14" />
+                </Style>
+            </Setter.Value>
+        </Setter>
     </Style>
 </ResourceDictionary>

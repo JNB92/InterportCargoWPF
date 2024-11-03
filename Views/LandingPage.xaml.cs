@@ -3,26 +3,44 @@ using System.Windows.Controls;
 
 namespace InterportCargoWPF.Views
 {
-    public partial class LandingPage
+    public partial class LandingPage : Page
     {
         public LandingPage()
         {
             InitializeComponent();
         }
+        private void ViewMyQuotations_Click(object sender, RoutedEventArgs e)
+        {
+            int loggedInCustomerId = SessionManager.LoggedInCustomerId;
+
+            if (loggedInCustomerId <= 0)
+            {
+                MessageBox.Show("Customer ID is not valid. Please log in again.");
+                return;
+            }
+
+            var mainWindow = MainWindow.Instance;
+            mainWindow.MainFrame.Visibility = Visibility.Visible;
+            mainWindow.MainFrame.Navigate(new CustomerQuotationsPage(loggedInCustomerId));
+        }
+
+
 
         private void GoToQuotation_Click(object sender, RoutedEventArgs e)
         {
+            // Retrieve the logged-in customer's ID from SessionManager
+            int loggedInCustomerId = SessionManager.LoggedInCustomerId;
+
             // Navigate to the QuotationPage using the MainFrame in MainWindow
             var mainWindow = MainWindow.Instance;
 
             // Set MainFrame's visibility if it's not already visible
             mainWindow.MainFrame.Visibility = Visibility.Visible;
 
-            // Navigate to QuotationPage within the MainFrame
-            mainWindow.MainFrame.Navigate(new QuotationPage());
+            // Navigate to QuotationPage within the MainFrame, passing the loggedInCustomerId
+            mainWindow.MainFrame.Navigate(new QuotationPage(loggedInCustomerId));
 
             // Optionally, hide the current content if needed
-            // (e.g., hiding a login form or other initial content)
             this.Visibility = Visibility.Collapsed;
         }
 
@@ -39,7 +57,5 @@ namespace InterportCargoWPF.Views
             mainWindow.EmailBox.Text = string.Empty;
             mainWindow.PasswordBox.Password = string.Empty;
         }
-
-
     }
 }

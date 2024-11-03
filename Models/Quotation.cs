@@ -11,6 +11,10 @@ namespace InterportCargoWPF.Models
         public string CargoType { get; set; }
         public int ContainerQuantity { get; set; }
         public string NatureOfJob { get; set; }
+        public DateTime TransportationDate { get; set; }
+        public string Status { get; set; }
+
+
 
         // Navigation property to link the quotation with a customer
         [ForeignKey("CustomerId")] public Customer Customer { get; set; }

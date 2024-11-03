@@ -16,16 +16,18 @@ namespace InterportCargoWPF.Views
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
             string employeeId = EmployeeIDBox.Text;
-            string employeeType = EmployeeTypeBox.Text;
+            string employeeType = EmployeeTypeBox.Text;  // Capture EmployeeType from ComboBox
             string firstName = FirstNameBox.Text;
             string lastName = LastNameBox.Text;
             string phoneNumber = PhoneNumberBox.Text;
             string email = EmailBox.Text;
             string password = PasswordBox.Password;
 
+            // Check that all required fields are filled
             if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName) ||
-                string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(employeeId) || string.IsNullOrWhiteSpace(phoneNumber) ||
-                string.IsNullOrWhiteSpace(employeeType) || string.IsNullOrWhiteSpace(password))
+                string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(employeeId) ||
+                string.IsNullOrWhiteSpace(phoneNumber) || string.IsNullOrWhiteSpace(employeeType) ||
+                string.IsNullOrWhiteSpace(password))
             {
                 MessageBox.Show("All fields are required.");
                 return;
@@ -34,13 +36,15 @@ namespace InterportCargoWPF.Views
             // Hash the password
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
-            // Create an Employee object
+            // Create an Employee object with all required fields
             var newEmployee = new Employee
             {
+                EmployeeID = employeeId,
+                EmployeeType = employeeType,  // Assign EmployeeType
                 FirstName = firstName,
                 LastName = lastName,
+                PhoneNumber = phoneNumber,    // Assign PhoneNumber
                 Email = email,
-                EmployeeID = employeeId,
                 PasswordHash = hashedPassword
             };
 
@@ -63,7 +67,6 @@ namespace InterportCargoWPF.Views
                     MessageBox.Show("An employee with this email already exists.");
                 }
             }
-            
         }
 
         private void ReturnToLogin_Click(object sender, RoutedEventArgs e)

@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using InterportCargoWPF.Database;
 using InterportCargoWPF.Views;
 
 namespace InterportCargoWPF.Views
@@ -33,15 +34,35 @@ namespace InterportCargoWPF.Views
             string email = EmailBox.Text;
             string enteredPassword = PasswordBox.Password;
 
-            // Sample validation (Replace with your actual database validation)
-            if (email == "admin" && enteredPassword == "password") 
+            using (var context = new AppDbContext())
             {
-                MessageBox.Show("Login successful!");
-                LoginSuccessful();
-            }
-            else
-            {
-                MessageBox.Show("Invalid email or password.");
+                // First, check if the customer exists in the database
+                var customer = context.Customers.FirstOrDefault(c => c.Email == email);
+
+                if (customer != null)
+                {
+                    // If the customer exists, verify the entered password against the stored hashed password
+                    bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(enteredPassword, customer.Password);
+
+                    if (isPasswordCorrect)
+                    {
+                        MessageBox.Show($"Login successful! Welcome, {customer.FirstName}.");
+                        
+                        // Set the LoggedInCustomerId in SessionManager
+                        SessionManager.LoggedInCustomerId = customer.Id;
+
+                        // Navigate to the landing page on successful login
+                        LoginSuccessful();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Invalid password.");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Invalid email or password.");
+                }
             }
         }
 
@@ -49,16 +70,8 @@ namespace InterportCargoWPF.Views
         {
             LoginForm.Visibility = Visibility.Collapsed;
             MainFrame.Visibility = Visibility.Visible;
-
-            // Navigate to a landing page or dashboard after successful login
-            MainFrame.Navigate(new LandingPage()); // Adjust LandingPage to your needs
+            MainFrame.Navigate(new LandingPage()); 
         }
-
-        // Optional method for showing the login form again if needed
-        public void ShowLoginForm()
-        {
-            MainFrame.Visibility = Visibility.Collapsed;
-            LoginForm.Visibility = Visibility.Visible;
-        }
+        
     }
 }

@@ -52,9 +52,8 @@ namespace InterportCargoWPF.Views
 
         private void OpenCustomerLoginPage_Click(object sender, RoutedEventArgs e)
         {
-            var mainWindow = new MainWindow();
-            mainWindow.Show();
-            Window.GetWindow(this)?.Close();
+            MainWindow.Instance.MainFrame.Visibility = Visibility.Collapsed;
+            MainWindow.Instance.LoginForm.Visibility = Visibility.Visible;
         }
        
 

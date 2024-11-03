@@ -6,8 +6,9 @@
     <Grid>
         <TextBlock Text="Welcome to Interport Cargo" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10"/>
         
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
             <Button Content="Go to Quotation Request" Width="200" Height="50" Click="GoToQuotation_Click"/>
+            <Button Content="View My Quotations" Width="200" Height="50" Click="ViewMyQuotations_Click"/>
             <Button Content="Logout" Width="200" Height="50" Click="Logout_Click"/>
         </StackPanel>
     </Grid>

@@ -17,6 +17,11 @@ namespace InterportCargoWPF.Views
             InitializeComponent();
             _loggedInCustomerId = loggedInCustomerId; // Store the customer ID for later use
         }
+        private void ViewRateSchedule_Click(object sender, RoutedEventArgs e)
+        {
+            // Open RateScheduleViewPage for reference
+            NavigationService?.Navigate(new RateScheduleViewPage());
+        }
 
         private void SubmitQuotation_Click(object sender, RoutedEventArgs e)
         {
@@ -87,7 +92,7 @@ namespace InterportCargoWPF.Views
             MessageBox.Show("Quotation successfully submitted!");
 
             // Navigate back to the main page or another target page
-            NavigationService?.Navigate(new MainWindow());
+            NavigationService?.Navigate(new LandingPage());
         }
 
         private void OnDateSelected(object sender, SelectionChangedEventArgs e)

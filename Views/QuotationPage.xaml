@@ -3,7 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       Title="Quotation">
 
-    <Grid>
+    <Grid Background="#F5F5F5" Margin="10">
         <!-- Header -->
         <Grid VerticalAlignment="Top" Height="50" Background="#E0E0E0">
             <TextBlock Text="INTERPORT CARGO" VerticalAlignment="Center" 
@@ -12,21 +12,23 @@
             <Button Content="Logout" HorizontalAlignment="Right" VerticalAlignment="Center" Height="30" Width="100" Margin="0,0,10,0"/>
         </Grid>
         
-        <Border HorizontalAlignment="Center" VerticalAlignment="Center" 
-                Padding="30" Width="400" Height="500">
+        <Border HorizontalAlignment="Center" VerticalAlignment="Top" 
+                Padding="30" Width="500" Margin="0,60,0,10" Background="White" BorderBrush="#D3D3D3" BorderThickness="1" CornerRadius="5">
             
             <StackPanel Margin="10">
+                <TextBlock Text="Quotation Request Form" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
                 <Label Content="Origin" />
-                <TextBox x:Name="OriginBox" />
-                
+                <TextBox x:Name="OriginBox" Width="400"/>
+
                 <Label Content="Destination" />
-                <TextBox x:Name="DestinationBox" />
-                
+                <TextBox x:Name="DestinationBox" Width="400"/>
+
                 <Label Content="Cargo Type" />
-                <TextBox x:Name="CargoTypeBox" />
-                
+                <TextBox x:Name="CargoTypeBox" Width="400"/>
+
                 <Label Content="Container Quantity" />
-                <ComboBox x:Name="ContainerQuantityComboBox">
+                <ComboBox x:Name="ContainerQuantityComboBox" Width="400">
                     <ComboBoxItem Content="1"/>
                     <ComboBoxItem Content="2"/>
                     <ComboBoxItem Content="3"/>
@@ -38,14 +40,26 @@
                     <ComboBoxItem Content="9"/>
                     <ComboBoxItem Content="10"/>
                 </ComboBox>
-                
+
                 <Label Content="Transportation Date" />
-                <DatePicker x:Name="TransportationDatePicker" SelectedDateChanged="OnDateSelected"/>
-                
+                <DatePicker x:Name="TransportationDatePicker" SelectedDateChanged="OnDateSelected" Width="400"/>
+
                 <Label Content="Additional Requirements"/>
-                <TextBox x:Name="AdditionalRequirementsBox" TextWrapping="Wrap" Height="60"/>
-                
-                <Button Content="Submit Quotation Request" Click="SubmitQuotation_Click" />
+                <TextBox x:Name="AdditionalRequirementsBox" TextWrapping="Wrap" Width="400" Height="60"/>
+
+                <!-- Discount Section -->
+                <Label Content="Apply Discount" />
+                <ComboBox x:Name="DiscountComboBox" Width="400">
+                    <ComboBoxItem Content="No Discount"/>
+                    <ComboBoxItem Content="Discount A (5%)"/>
+                    <ComboBoxItem Content="Discount B (10%)"/>
+                </ComboBox>
+
+                <!-- View Rate Schedule Button -->
+                <Button Content="View Rate Schedule" Click="ViewRateSchedule_Click" Width="150" Margin="0,10,0,10" HorizontalAlignment="Right"/>
+
+                <!-- Submit Button -->
+                <Button Content="Submit Quotation Request" Click="SubmitQuotation_Click" Width="400" Height="40" Background="#007ACC" Foreground="White" FontWeight="Bold" Margin="0,20,0,0"/>
             </StackPanel>
         </Border>
 

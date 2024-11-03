@@ -21,14 +21,19 @@ namespace InterportCargoWPF.Views
 
         private void LoadQuotations()
         {
-            using (var context = new AppDbContext())
+            try
             {
-                // Load only quotations for the logged-in customer
-                var quotations = context.Quotations
-                    .Where(q => q.CustomerId == _customerId)
-                    .ToList();
-
-                QuotationsDataGrid.ItemsSource = quotations;
+                using (var context = new AppDbContext())
+                {
+                    var quotations = context.Quotations
+                        .Where(q => q.CustomerId == _customerId)
+                        .ToList();
+                    QuotationsDataGrid.ItemsSource = quotations;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while loading quotations: {ex.Message}", "Error");
             }
         }
 
@@ -36,74 +41,76 @@ namespace InterportCargoWPF.Views
         {
             if (sender is Button button && button.Tag is int quotationId)
             {
-                // Show confirmation dialog
                 MessageBoxResult result = MessageBox.Show("Do you want to accept this quotation?", "Respond to Quotation", MessageBoxButton.YesNo);
                 string status = result == MessageBoxResult.Yes ? "Accepted by Customer" : "Rejected by Customer";
-        
-                // Update the quotation status based on customer response
                 UpdateCustomerQuotationStatus(quotationId, status);
             }
         }
 
         private void UpdateCustomerQuotationStatus(int quotationId, string status)
         {
-            // Update the status in the data source (in-memory collection or database)
             var quotation = Quotations.FirstOrDefault(q => q.Id == quotationId);
             if (quotation != null)
             {
                 quotation.Status = status;
-                RefreshQuotationGrid(); // Refresh the DataGrid to show the updated status
-        
-                // Notify the Quotation Officer
+                RefreshQuotationGrid();
                 NotifyQuotationOfficer(quotationId, status);
             }
         }
 
         private void NotifyQuotationOfficer(int quotationId, string status)
         {
-            using (var context = new AppDbContext())
+            try
             {
-                var quotation = context.Quotations.FirstOrDefault(q => q.Id == quotationId);
-                if (quotation != null)
+                using (var context = new AppDbContext())
                 {
-                    quotation.Status = status;
-                    context.SaveChanges();
-            
-                    // Optionally, add a notification record or update Quotation Officer's dashboard
-                    // This is a placeholder; implementation will depend on notification logic
+                    var quotation = context.Quotations.FirstOrDefault(q => q.Id == quotationId);
+                    if (quotation != null)
+                    {
+                        quotation.Status = status;
+                        context.SaveChanges();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while notifying the officer: {ex.Message}", "Error");
             }
         }
 
         private void LoadNotifications()
         {
-            using (var context = new AppDbContext())
+            try
             {
-                var notifications = context.Notifications
-                    .Where(n => n.CustomerId == _customerId && !n.IsRead)
-                    .OrderByDescending(n => n.DateCreated)
-                    .ToList();
-
-                if (notifications.Any())
+                using (var context = new AppDbContext())
                 {
-                    string notificationMessage = string.Join("\n", notifications.Select(n => n.Message));
-                    MessageBox.Show(notificationMessage, "Notifications");
+                    var notifications = context.Notifications
+                        .Where(n => n.CustomerId == _customerId && !n.IsRead)
+                        .OrderByDescending(n => n.DateCreated)
+                        .ToList();
 
-                    // Mark notifications as read
-                    foreach (var notification in notifications)
+                    if (notifications.Any())
                     {
-                        notification.IsRead = true;
-                    }
+                        string notificationMessage = string.Join("\n", notifications.Select(n => n.Message));
+                        MessageBox.Show(notificationMessage, "Notifications");
 
-                    context.SaveChanges();
+                        foreach (var notification in notifications)
+                        {
+                            notification.IsRead = true;
+                        }
+                        context.SaveChanges();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while loading notifications: {ex.Message}", "Error");
             }
         }
 
         private void RefreshQuotationGrid()
         {
-            LoadQuotations(); // Reload from the database to get the latest data
+            LoadQuotations();
         }
-
     }
 }

@@ -9,6 +9,7 @@ namespace InterportCargoWPF.Database
         public DbSet<Quotation> Quotations { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<RateSchedule> RateSchedules { get; set; }
 
 
         // This is where you configure SQLite

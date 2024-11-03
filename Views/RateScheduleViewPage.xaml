@@ -1,0 +1,28 @@
+﻿<Page x:Class="InterportCargoWPF.Views.RateScheduleViewPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Rate Schedule" Height="450" Width="800">
+    
+    <Grid Background="#F5F5F5" Margin="10">
+        <TextBlock Text="Rate Schedule" FontSize="24" FontWeight="Bold" 
+                   HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,20"/>
+
+        <DataGrid x:Name="RateScheduleDataGrid" AutoGenerateColumns="False" Margin="0,60,0,0"
+                  HorizontalAlignment="Stretch" VerticalAlignment="Top" 
+                  CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True">
+            
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Container Type" Binding="{Binding ContainerType}" Width="*"/>
+                <DataGridTextColumn Header="Wharf Booking Fee" Binding="{Binding WharfBookingFee, StringFormat=C}" Width="*"/>
+                <DataGridTextColumn Header="Lift On/Lift Off Fee" Binding="{Binding LiftOnLiftOffFee, StringFormat=C}" Width="*"/>
+                <DataGridTextColumn Header="Fumigation Fee" Binding="{Binding FumigationFee, StringFormat=C}" Width="*"/>
+                <DataGridTextColumn Header="LCL Delivery Depot" Binding="{Binding LclDeliveryDepot, StringFormat=C}" Width="*"/>
+                <DataGridTextColumn Header="Tailgate Inspection Fee" Binding="{Binding TailgateInspectionFee, StringFormat=C}" Width="*"/>
+                <DataGridTextColumn Header="Storage Fee" Binding="{Binding StorageFee, StringFormat=C}" Width="*"/>
+                <DataGridTextColumn Header="Facility Fee" Binding="{Binding FacilityFee, StringFormat=C}" Width="*"/>
+                <DataGridTextColumn Header="Wharf Inspection Fee" Binding="{Binding WharfInspectionFee, StringFormat=C}" Width="*"/>
+                <DataGridTextColumn Header="GST" Binding="{Binding GstRate, StringFormat=P}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>

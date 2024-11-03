@@ -63,8 +63,10 @@ namespace InterportCargoWPF.Views
                 ContainerQuantity = containerQuantity,
                 NatureOfJob = additionalRequirements,
                 TransportationDate = selectedDate.Value,
-                CustomerId = _loggedInCustomerId // Assign the logged-in customer's ID
+                CustomerId = _loggedInCustomerId, // Assign the logged-in customer's ID
+                Status = "Pending" // Set initial status to Pending
             };
+
 
             // Save the quotation to the database
             using (var context = new AppDbContext())

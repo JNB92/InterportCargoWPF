@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using InterportCargoWPF.Database;
 using BCrypt.Net;
@@ -33,29 +34,36 @@ namespace InterportCargoWPF.Views
 
                     // Navigate to the employee dashboard or main application section for employees
                     MainWindow.Instance.MainFrame.Navigate(new EmployeeDashboardPage());
+
+                    // Update button visibility on the MainWindow after successful login
+                    MainWindow.Instance.EmployeeLoginButton.Visibility = Visibility.Collapsed;
+                    MainWindow.Instance.BackButton.Visibility = Visibility.Visible;
+                    MainWindow.Instance.LogoutButton.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     MessageBox.Show("Invalid email or password.");
                 }
-                MainWindow.Instance.MainFrame.Navigate(new EmployeeDashboardPage());
-
             }
         }
+
         private void OpenEmployeeRegisterPage_Click(object sender, RoutedEventArgs e)
         {
-            MainFrame.Visibility = Visibility.Visible;
-            LoginForm.Visibility = Visibility.Collapsed;
-            MainFrame.Navigate(new EmployeeRegisterPage());
+            MainWindow.Instance.MainFrame.Visibility = Visibility.Visible;
+            MainWindow.Instance.LoginForm.Visibility = Visibility.Collapsed;
+            MainWindow.Instance.MainFrame.Navigate(new EmployeeRegisterPage());
         }
-
 
         private void OpenCustomerLoginPage_Click(object sender, RoutedEventArgs e)
         {
+            // Reset the interface to Customer Login
             MainWindow.Instance.MainFrame.Visibility = Visibility.Collapsed;
             MainWindow.Instance.LoginForm.Visibility = Visibility.Visible;
-        }
-       
 
+            // Ensure buttons are in initial state for Customer Login
+            MainWindow.Instance.EmployeeLoginButton.Visibility = Visibility.Visible;
+            MainWindow.Instance.BackButton.Visibility = Visibility.Collapsed;
+            MainWindow.Instance.LogoutButton.Visibility = Visibility.Collapsed;
+        }
     }
 }

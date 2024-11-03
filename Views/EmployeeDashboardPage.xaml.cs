@@ -58,19 +58,29 @@ namespace InterportCargoWPF.Views
         // Method to update the status of the quotation
         private void UpdateQuotationStatus(int quotationId, string status)
         {
-            // Find and update the status in the Quotations collection
             var quotation = Quotations.FirstOrDefault(q => q.Id == quotationId);
             if (quotation != null)
             {
                 quotation.Status = status;
 
-                // Save changes to the database
                 using (var context = new AppDbContext())
                 {
                     var quotationToUpdate = context.Quotations.Find(quotationId);
                     if (quotationToUpdate != null)
                     {
                         quotationToUpdate.Status = status;
+                        context.SaveChanges();
+
+                        // Create a notification for the customer
+                        var notification = new Notification
+                        {
+                            CustomerId = quotationToUpdate.CustomerId,
+                            Message = $"Your quotation with ID {quotationId} has been {status.ToLower()} by the Quotation Officer.",
+                            DateCreated = DateTime.Now,
+                            IsRead = false
+                        };
+
+                        context.Notifications.Add(notification);
                         context.SaveChanges();
                     }
                 }
@@ -79,10 +89,11 @@ namespace InterportCargoWPF.Views
             }
         }
 
+
+
         private void RefreshQuotationGrid()
         {
-            QuotationsDataGrid.ItemsSource = null;
-            QuotationsDataGrid.ItemsSource = Quotations; // Reassign the data source to refresh
+            LoadQuotations(); // Reload from the database to get the latest data
         }
     }
 }

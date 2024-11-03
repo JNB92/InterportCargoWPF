@@ -61,14 +61,48 @@ namespace InterportCargoWPF.Views
 
         private void NotifyQuotationOfficer(int quotationId, string status)
         {
-            // Implementation for notifying the Quotation Officer of the customer's decision
-            // This could involve updating the officer's dashboard or triggering an in-app notification
+            using (var context = new AppDbContext())
+            {
+                var quotation = context.Quotations.FirstOrDefault(q => q.Id == quotationId);
+                if (quotation != null)
+                {
+                    quotation.Status = status;
+                    context.SaveChanges();
+            
+                    // Optionally, add a notification record or update Quotation Officer's dashboard
+                    // This is a placeholder; implementation will depend on notification logic
+                }
+            }
+        }
+
+        private void LoadNotifications()
+        {
+            using (var context = new AppDbContext())
+            {
+                var notifications = context.Notifications
+                    .Where(n => n.CustomerId == _customerId && !n.IsRead)
+                    .OrderByDescending(n => n.DateCreated)
+                    .ToList();
+
+                if (notifications.Any())
+                {
+                    string notificationMessage = string.Join("\n", notifications.Select(n => n.Message));
+                    MessageBox.Show(notificationMessage, "Notifications");
+
+                    // Mark notifications as read
+                    foreach (var notification in notifications)
+                    {
+                        notification.IsRead = true;
+                    }
+
+                    context.SaveChanges();
+                }
+            }
         }
 
         private void RefreshQuotationGrid()
         {
-            QuotationsDataGrid.ItemsSource = null;
-            QuotationsDataGrid.ItemsSource = Quotations; // Reassign the data source to refresh
+            LoadQuotations(); // Reload from the database to get the latest data
         }
 
     }

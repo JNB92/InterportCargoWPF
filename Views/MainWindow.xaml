@@ -1,7 +1,7 @@
 ﻿<Window x:Class="InterportCargoWPF.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Interport Cargo" Height="650" Width="800">
+        Title="Interport Cargo" Height="900" Width="800">
     
     <Grid>
         <!-- Header -->
@@ -9,8 +9,18 @@
             <TextBlock Text="INTERPORT CARGO" VerticalAlignment="Center" 
                        HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" 
                        Margin="10,0,0,0"/>
-            <Button Content="Employee Login" HorizontalAlignment="Right" Width="150" Height="30" Margin="0,10,0,0"
-                    Click="OpenEmployeeLoginPage_Click"/>
+
+            <!-- Employee Login Button (initially visible) -->
+            <Button x:Name="EmployeeLoginButton" Content="Employee Login" HorizontalAlignment="Right" Width="150" Height="30" Margin="0,10,10,0"
+                    Click="OpenEmployeeLoginPage_Click" Visibility="Visible"/>
+
+            <!-- Back Button (initially hidden) -->
+            <Button x:Name="BackButton" Content="Back" HorizontalAlignment="Right" Width="75" Height="30" Margin="0,10,170,0"
+                    Click="BackButton_Click" Visibility="Collapsed"/>
+
+            <!-- Logout Button (initially hidden) -->
+            <Button x:Name="LogoutButton" Content="Logout" HorizontalAlignment="Right" Width="75" Height="30" Margin="0,10,90,0"
+                    Click="LogoutButton_Click" Visibility="Collapsed"/>
         </Grid>
 
         <!-- Frame for navigation (Initially hidden, but shown after login) -->

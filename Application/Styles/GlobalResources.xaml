@@ -1,18 +1,12 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:interportCargoWpf="clr-namespace:InterportCargoWPF"
-                    xmlns:views="clr-namespace:InterportCargoWPF.Views">
- 
-    <!-- Define General Window/Page Styles -->
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Define Background Style for Pages -->
     <Style TargetType="Page">
         <Setter Property="Background" Value="#F5F5F5" />
     </Style>
 
-    <Style TargetType="views:MainWindow">
-        <Setter Property="Background" Value="#F5F5F5" />
-    </Style>
-
-    <!-- Define Header Text Style -->
+    <!-- Define General Header Text Style -->
     <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="24" />
         <Setter Property="FontWeight" Value="Bold" />

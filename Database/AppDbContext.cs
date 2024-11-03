@@ -8,6 +8,8 @@ namespace InterportCargoWPF.Database
         public DbSet<Customer?> Customers { get; set; }
         public DbSet<Quotation> Quotations { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+
 
         // This is where you configure SQLite
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -1,29 +1,31 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Linq;  // Don't forget to include this for LINQ queries
-using InterportCargoWPF.Database;
-using InterportCargoWPF.Models;
-
+using InterportCargoWPF.Views;
 
 namespace InterportCargoWPF.Views
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public static MainWindow Instance { get; private set; }
+
         public MainWindow()
         {
             InitializeComponent();
             Instance = this;
         }
 
+        private void OpenEmployeeLoginPage_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Visibility = Visibility.Visible;
+            LoginForm.Visibility = Visibility.Collapsed;
+            MainFrame.Navigate(new EmployeeLoginPage()); // Navigates to EmployeeLoginPage
+        }
+
         private void OpenRegisterWindow_Click(object sender, RoutedEventArgs e)
         {
-            RegisterWindow registerWindow = new RegisterWindow();
-            registerWindow.Show();
-            this.Close();
+            MainFrame.Visibility = Visibility.Visible;
+            LoginForm.Visibility = Visibility.Collapsed;
+            MainFrame.Navigate(new RegisterPage()); // Navigates to RegisterPage
         }
 
         public void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -31,43 +33,32 @@ namespace InterportCargoWPF.Views
             string email = EmailBox.Text;
             string enteredPassword = PasswordBox.Password;
 
-            using (var context = new AppDbContext())
+            // Sample validation (Replace with your actual database validation)
+            if (email == "admin" && enteredPassword == "password") 
             {
-                // First, check if the customer exists in the database
-                var customer = context.Customers.FirstOrDefault(c => c.Email == email);
-
-                if (customer != null)
-                {
-                    // If the customer exists, verify the entered password against the stored hashed password
-                    bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(enteredPassword, customer.Password);
-
-                    if (isPasswordCorrect)
-                    {
-                        MessageBox.Show($"Login successful! Welcome, {customer.FirstName}.");
-
-                        // Navigate to the landing page on successful login
-                        LoginSuccessful();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Invalid password.");
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Invalid email or password.");
-                }
+                MessageBox.Show("Login successful!");
+                LoginSuccessful();
+            }
+            else
+            {
+                MessageBox.Show("Invalid email or password.");
             }
         }
 
         public void LoginSuccessful()
         {
-            // Hide the login form and show the frame
             LoginForm.Visibility = Visibility.Collapsed;
             MainFrame.Visibility = Visibility.Visible;
 
-            // Navigate to the landing page on successful login
-            MainFrame.NavigationService.Navigate(new LandingPage());
+            // Navigate to a landing page or dashboard after successful login
+            MainFrame.Navigate(new LandingPage()); // Adjust LandingPage to your needs
+        }
+
+        // Optional method for showing the login form again if needed
+        public void ShowLoginForm()
+        {
+            MainFrame.Visibility = Visibility.Collapsed;
+            LoginForm.Visibility = Visibility.Visible;
         }
     }
 }

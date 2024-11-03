@@ -1,15 +1,14 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Collections.Generic;
+using System.Linq;
+using InterportCargoWPF.Database;
+using InterportCargoWPF.Models;
 
 namespace InterportCargoWPF.Views
 {
-    /// <summary>
-    /// Interaction logic for QuotationWindow.xaml
-    /// </summary>
-    public partial class QuotationWindow : Window
+    public partial class QuotationPage : Page
     {
-        public QuotationWindow()
+        public QuotationPage()
         {
             InitializeComponent();
         }
@@ -50,13 +49,9 @@ namespace InterportCargoWPF.Views
             MessageBox.Show(
                 $"Quotation submitted:\nSource: {origin}\nDestination: {destination}\nCargo Type: {cargoType}\nContainers: {containerQuantity}\nDate: {formattedDate}\nAdditional Requirements: {additionalRequirements}");
 
-            // Get the main window instance
-            var mainWindow = MainWindow.Instance;
-
-            mainWindow.Show();
-            this.Close();
+            // Navigate back to the main page or any other target page
+            NavigationService?.Navigate(new MainWindow());
         }
-
 
         private void OnDateSelected(object sender, SelectionChangedEventArgs e)
         {

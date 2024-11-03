@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 using InterportCargoWPF.Database;
 using InterportCargoWPF.Models;
 using BCrypt.Net;
@@ -6,11 +8,11 @@ using BCrypt.Net;
 namespace InterportCargoWPF.Views
 {
     /// <summary>
-    /// Interaction logic for RegisterWindow.xaml
+    /// Interaction logic for RegisterPage.xaml
     /// </summary>
-    public partial class RegisterWindow
+    public partial class RegisterPage : Page  // Inherit from Page
     {
-        public RegisterWindow()
+        public RegisterPage()
         {
             InitializeComponent();
         }
@@ -34,7 +36,7 @@ namespace InterportCargoWPF.Views
             // Hash the password
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
-            // Pass the hashed password to the Customer object
+            // Create a new Customer object
             var newCustomer = new Customer(firstName, lastName, email, phoneNumber, hashedPassword);
 
             // Save the new customer to the database (using Entity Framework)
@@ -49,7 +51,7 @@ namespace InterportCargoWPF.Views
 
                     MessageBox.Show("Registration successful!");
 
-                    // After successful registration, return to the login window
+                    // Navigate back to login page after successful registration
                     ReturnToLogin_Click(this, new RoutedEventArgs());
                 }
                 else
@@ -61,9 +63,14 @@ namespace InterportCargoWPF.Views
 
         private void ReturnToLogin_Click(object sender, RoutedEventArgs e)
         {
-            var mainWindow = new MainWindow();
-            mainWindow.Show();
-            this.Close(); 
+            // Get the window that contains this page, which is MainWindow
+            if (Window.GetWindow(this) is MainWindow mainWindow)
+            {
+                // Hide the frame and show the login form within MainWindow
+                mainWindow.MainFrame.Visibility = Visibility.Collapsed;
+                mainWindow.LoginForm.Visibility = Visibility.Visible;
+            }
         }
+
     }
 }

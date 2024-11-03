@@ -12,11 +12,18 @@ namespace InterportCargoWPF.Views
 
         private void GoToQuotation_Click(object sender, RoutedEventArgs e)
         {
-            // Navigate to the Quotation window or page
-            var quotationWindow = new QuotationWindow();
-            quotationWindow.Show();
+            // Navigate to the QuotationPage using the MainFrame in MainWindow
             var mainWindow = MainWindow.Instance;
-            mainWindow.Hide();
+
+            // Set MainFrame's visibility if it's not already visible
+            mainWindow.MainFrame.Visibility = Visibility.Visible;
+
+            // Navigate to QuotationPage within the MainFrame
+            mainWindow.MainFrame.Navigate(new QuotationPage());
+
+            // Optionally, hide the current content if needed
+            // (e.g., hiding a login form or other initial content)
+            this.Visibility = Visibility.Collapsed;
         }
 
         private void Logout_Click(object sender, RoutedEventArgs e)

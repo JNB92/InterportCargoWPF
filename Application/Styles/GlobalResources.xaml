@@ -8,11 +8,11 @@
         <Setter Property="Background" Value="Lime" />
     </Style>
    
-    <Style TargetType="views:RegisterWindow" >
+    <Style TargetType="views:RegisterPage" >
         <Setter Property="Background" Value="Lime" />
     </Style>
     
-    <Style TargetType="views:QuotationWindow" >
+    <Style TargetType="views:QuotationPage" >
         <Setter Property="Background" Value="Lime" />
     </Style>
 

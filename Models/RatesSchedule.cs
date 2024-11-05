@@ -1,21 +1,80 @@
-﻿namespace InterportCargoWPF.Models;
-
-public class RateSchedule
+﻿namespace InterportCargoWPF.Models
 {
-    public int Id { get; set; }
-    public string Type { get; set; } // or ContainerType, choose one
-    public decimal TwentyFeetContainer { get; set; }
-    public decimal FortyFeetContainer { get; set; }
-    public decimal DepotCharges { get; set; }
-    public decimal LclDeliveryCharges { get; set; }
+    /// <summary>
+    /// Represents a rate schedule for various fees associated with container handling and transportation.
+    /// Includes rates for different container types and associated service charges.
+    /// </summary>
+    public class RateSchedule
+    {
+        /// <summary>
+        /// Gets or sets the unique identifier for the rate schedule entry.
+        /// </summary>
+        public int Id { get; set; }
 
-    // Additional properties
-    public decimal WharfBookingFee { get; set; }
-    public decimal LiftOnLiftOffFee { get; set; }
-    public decimal FumigationFee { get; set; }
-    public decimal TailgateInspectionFee { get; set; }
-    public decimal StorageFee { get; set; }
-    public decimal FacilityFee { get; set; }
-    public decimal WharfInspectionFee { get; set; }
-    public decimal GstRate { get; set; } = 0.10m; // Default 10%
+        /// <summary>
+        /// Gets or sets the type of rate (e.g., "Container Handling", "Fumigation").
+        /// </summary>
+        public string Type { get; set; }
+
+        /// <summary>
+        /// Gets or sets the rate for a 20-feet container.
+        /// </summary>
+        public decimal TwentyFeetContainer { get; set; }
+
+        /// <summary>
+        /// Gets or sets the rate for a 40-feet container.
+        /// </summary>
+        public decimal FortyFeetContainer { get; set; }
+
+        /// <summary>
+        /// Gets or sets the depot charges associated with this rate type.
+        /// </summary>
+        public decimal DepotCharges { get; set; }
+
+        /// <summary>
+        /// Gets or sets the charges for LCL (Less than Container Load) delivery.
+        /// </summary>
+        public decimal LclDeliveryCharges { get; set; }
+
+        /// <summary>
+        /// Gets or sets the wharf booking fee.
+        /// </summary>
+        public decimal WharfBookingFee { get; set; }
+
+        /// <summary>
+        /// Gets or sets the lift-on/lift-off fee.
+        /// </summary>
+        public decimal LiftOnLiftOffFee { get; set; }
+
+        /// <summary>
+        /// Gets or sets the fumigation fee.
+        /// </summary>
+        public decimal FumigationFee { get; set; }
+
+        /// <summary>
+        /// Gets or sets the tailgate inspection fee.
+        /// </summary>
+        public decimal TailgateInspectionFee { get; set; }
+
+        /// <summary>
+        /// Gets or sets the storage fee.
+        /// </summary>
+        public decimal StorageFee { get; set; }
+
+        /// <summary>
+        /// Gets or sets the facility fee.
+        /// </summary>
+        public decimal FacilityFee { get; set; }
+
+        /// <summary>
+        /// Gets or sets the wharf inspection fee.
+        /// </summary>
+        public decimal WharfInspectionFee { get; set; }
+
+        /// <summary>
+        /// Gets or sets the GST (Goods and Services Tax) rate.
+        /// Default is set to 10%.
+        /// </summary>
+        public decimal GstRate { get; set; } = 0.10m;
+    }
 }

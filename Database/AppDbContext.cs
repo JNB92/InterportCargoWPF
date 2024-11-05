@@ -1,22 +1,46 @@
 ﻿using InterportCargoWPF.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace InterportCargoWPF.Database;
-
-public class AppDbContext : DbContext
+namespace InterportCargoWPF.Database
 {
-    public DbSet<Customer?> Customers { get; set; }
-    public DbSet<Quotation> Quotations { get; set; }
-    public DbSet<Employee> Employees { get; set; }
-    public DbSet<Notification> Notifications { get; set; }
-    public DbSet<RateSchedule> RateSchedules { get; set; }
-
-
-    // This is where you configure SQLite
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    /// <summary>
+    /// Represents the database context for the application, providing access to entities such as customers, quotations, employees, notifications, and rate schedules.
+    /// Configures the database connection and manages data access.
+    /// </summary>
+    public class AppDbContext : DbContext
     {
-        // This sets the SQLite database file path
-        optionsBuilder.UseSqlite(
-            @"Data Source=C:\Users\61414\RiderProjects\InterportCargoWPF\Database\interportcargo.db");
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{Customer}"/> for accessing customer data.
+        /// </summary>
+        public DbSet<Customer> Customers { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{Quotation}"/> for accessing quotation data.
+        /// </summary>
+        public DbSet<Quotation> Quotations { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{Employee}"/> for accessing employee data.
+        /// </summary>
+        public DbSet<Employee> Employees { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{Notification}"/> for accessing notification data.
+        /// </summary>
+        public DbSet<Notification> Notifications { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{RateSchedule}"/> for accessing rate schedule data.
+        /// </summary>
+        public DbSet<RateSchedule> RateSchedules { get; set; }
+
+        /// <summary>
+        /// Configures the database to use SQLite, setting the file path for the database file.
+        /// </summary>
+        /// <param name="optionsBuilder">The options builder used to configure the database connection.</param>
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlite(@"Data Source=C:\Users\61414\RiderProjects\InterportCargoWPF\Database\interportcargo.db");
+        }
     }
 }

@@ -6,7 +6,6 @@
 
     <Grid Background="#F5F5F5" Width="Auto" Height="Auto" MaxWidth="800" MaxHeight="600">
         <!-- Header -->
-        
         <TextBlock Text="Quotation Officer Dashboard" Style="{StaticResource HeaderTextStyle}" />
 
         <!-- Quotations DataGrid -->
@@ -14,7 +13,26 @@
                   SelectionMode="Single" IsReadOnly="True" MaxHeight="400"
                   HorizontalAlignment="Stretch" VerticalAlignment="Top"
                   CanUserResizeColumns="False" CanUserReorderColumns="False"
-                  ColumnHeaderHeight="50">
+                  ColumnHeaderHeight="50" GridLinesVisibility="Vertical"
+                  BorderBrush="#D3D3D3" BorderThickness="1">
+
+            <!-- RowStyle to apply background color based on Status -->
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Status}" Value="Pending">
+                            <Setter Property="Background" Value="Yellow"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="Accepted">
+                            <Setter Property="Background" Value="Green"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="Rejected"> <!-- Ensure the value matches "Rejected" exactly -->
+                            <Setter Property="Background" Value="LightCoral"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+
 
             <DataGrid.Columns>
                 <!-- Quotation Number Column -->
@@ -29,6 +47,14 @@
                     <DataGridTextColumn.HeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" TextWrapping="Wrap" TextAlignment="Center"/>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
                         </Style>
                     </DataGridTextColumn.HeaderStyle>
                 </DataGridTextColumn>
@@ -45,6 +71,14 @@
                     <DataGridTextColumn.HeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" TextWrapping="Wrap" TextAlignment="Center"/>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
                         </Style>
                     </DataGridTextColumn.HeaderStyle>
                 </DataGridTextColumn>
@@ -61,6 +95,14 @@
                     <DataGridTextColumn.HeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" TextWrapping="Wrap" TextAlignment="Center"/>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
                         </Style>
                     </DataGridTextColumn.HeaderStyle>
                 </DataGridTextColumn>
@@ -72,31 +114,33 @@
                             <Setter Property="TextWrapping" Value="Wrap"/>
                             <Setter Property="VerticalAlignment" Value="Center"/>
                             <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Status}" Value="Pending">
-                                    <Setter Property="Background" Value="Yellow"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Status}" Value="Accepted">
-                                    <Setter Property="Background" Value="Green"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Status}" Value="Rejected">
-                                    <Setter Property="Background" Value="LightCoral"/>
-                                </DataTrigger>
-                            </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" TextWrapping="Wrap" TextAlignment="Center"/>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
                 </DataGridTextColumn>
 
-
-                <!-- Action Buttons for Accept and Reject -->
-                <DataGridTemplateColumn Header="Actions" Width="280">
+                <!-- Actions ComboBox Column -->
+                <DataGridTemplateColumn Header="Actions" Width="150">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <UniformGrid Columns="3" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Button Content="Accept" Width="80" Margin="0,0,8,0" Click="AcceptButton_Click" Tag="{Binding Id}" Background="Green" Foreground="White"/>
-                                <Button Content="Reject" Width="80" Margin="0,0,8,0" Click="RejectButton_Click" Tag="{Binding Id}" Background="Red" Foreground="White"/>
-                                <Button Content="Pending" Width="80" Margin="0,0,8,0" Click="PendingButton_Click" Tag="{Binding Id}" Background="Yellow" Foreground="Black"/>
-                            </UniformGrid>
+                            <ComboBox Width="120" HorizontalAlignment="Center"
+                                      SelectionChanged="ActionComboBox_SelectionChanged">
+                                <ComboBoxItem Content="Accept" Tag="{Binding Id}" Background="Green" Foreground="White"/>
+                                <ComboBoxItem Content="Reject" Tag="{Binding Id}" Background="Red" Foreground="White"/>
+                                <ComboBoxItem Content="Pending" Tag="{Binding Id}" Background="Yellow" Foreground="Black"/>
+                            </ComboBox>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderStyle>
@@ -104,6 +148,14 @@
                             <Setter Property="HorizontalContentAlignment" Value="Center"/>
                             <Setter Property="Background" Value="#007ACC"/>
                             <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" TextWrapping="Wrap" TextAlignment="Center"/>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
                         </Style>
                     </DataGridTemplateColumn.HeaderStyle>
                 </DataGridTemplateColumn>

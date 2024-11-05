@@ -107,11 +107,11 @@ namespace InterportCargoWPF.Views
             };
             timer.Start();
         }
-       
+
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (MainFrame.CanGoBack && MainFrame.Content != this)
+            if (MainFrame.CanGoBack && MainFrame.Content != this && MainFrame.Content is not EmployeeDashboardPage)
             {
                 MainFrame.GoBack();
             }
@@ -121,6 +121,7 @@ namespace InterportCargoWPF.Views
                 ShowCantGoBackMessage();
             }
         }
+
 
         
 

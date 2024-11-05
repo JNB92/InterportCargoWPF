@@ -27,7 +27,7 @@ public partial class QuotationPage : Page
         }
     }
 
-    private void SubmitQuotation_Click(object sender, RoutedEventArgs e)
+    public void SubmitQuotation_Click(object sender, RoutedEventArgs e)
     {
         // Retrieve inputs and validate required fields
         var origin = OriginBox.Text;

@@ -14,16 +14,16 @@
                            IsHitTestVisible="False" />
 
                 <Label Content="Origin" />
-                <TextBox x:Name="OriginBox" Width="400" />
+                <TextBox x:Name="OriginBox" Width="400" x:FieldModifier="public" />
 
                 <Label Content="Destination" />
-                <TextBox x:Name="DestinationBox" Width="400" />
+                <TextBox x:Name="DestinationBox" Width="400" x:FieldModifier="public" />
 
                 <Label Content="Cargo Type" />
-                <TextBox x:Name="CargoTypeBox" Width="400" />
+                <TextBox x:Name="CargoTypeBox" Width="400" x:FieldModifier="public" />
 
                 <Label Content="Container Quantity" />
-                <ComboBox x:Name="ContainerQuantityComboBox" Width="400">
+                <ComboBox x:Name="ContainerQuantityComboBox" Width="400" x:FieldModifier="public">
                     <ComboBoxItem Content="1" />
                     <ComboBoxItem Content="2" />
                     <ComboBoxItem Content="3" />
@@ -37,11 +37,12 @@
                 </ComboBox>
 
                 <Label Content="Transportation Date" />
-                <DatePicker x:Name="TransportationDatePicker" SelectedDateChanged="OnDateSelected" Width="400" />
+                <DatePicker x:Name="TransportationDatePicker" SelectedDateChanged="OnDateSelected" Width="400"
+                            x:FieldModifier="public" />
 
                 <!-- Nature of Job ComboBox -->
                 <Label Content="Nature of Job" />
-                <ComboBox x:Name="NatureOfJobComboBox" Width="400">
+                <ComboBox x:Name="NatureOfJobComboBox" Width="400" x:FieldModifier="public">
                     <ComboBoxItem Content="Import" />
                     <ComboBoxItem Content="Export" />
                     <ComboBoxItem Content="Packing" />

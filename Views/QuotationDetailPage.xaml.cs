@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using InterportCargoWPF.Database;
@@ -11,6 +10,9 @@ namespace InterportCargoWPF.Views
     public partial class QuotationDetailPage : Page
     {
         private readonly int _quotationId;
+
+        // Define the QuotationUpdated event
+        public event Action QuotationUpdated;
 
         public QuotationDetailPage(int quotationId)
         {
@@ -29,15 +31,19 @@ namespace InterportCargoWPF.Views
 
                 if (quotation != null)
                 {
+                    // Populate UI with quotation details
                     QuotationIdTextBlock.Text = quotation.Id.ToString();
-                    CustomerNameTextBlock.Text = quotation.Customer.FullName;
+                    CustomerNameTextBlock.Text = quotation.Customer?.FullName ?? "N/A";
                     OriginTextBlock.Text = quotation.Origin;
                     DestinationTextBlock.Text = quotation.Destination;
                     CargoTypeTextBlock.Text = quotation.CargoType;
                     ContainerQuantityTextBlock.Text = quotation.ContainerQuantity.ToString();
                     TransportationDateTextBlock.Text = quotation.TransportationDate.ToShortDateString();
                     NatureOfJobTextBlock.Text = quotation.NatureOfJob;
-                    AdditionalRequirementsTextBlock.Text = quotation.AdditionalRequirements;
+                    AdditionalRequirementsTextBlock.Text = quotation.AdditionalRequirements ?? string.Empty;
+
+                    // Calculate and display amounts
+                    CalculateAndDisplayAmounts(quotation);
                 }
                 else
                 {
@@ -47,9 +53,50 @@ namespace InterportCargoWPF.Views
             }
         }
 
-        private void ViewRateSchedule_Click(object sender, RoutedEventArgs e)
+        private void CalculateAndDisplayAmounts(Quotation quotation)
         {
-            NavigationService?.Navigate(new RateScheduleViewPage());
+            // Retrieve the base rates (hard-coded for demonstration)
+            decimal baseRatePerContainer = quotation.CargoType == "20 Feet" ? 60.0m : 70.0m;
+            decimal initialAmount = baseRatePerContainer * quotation.ContainerQuantity;
+
+            // Apply discount based on criteria
+            decimal discount = 0;
+            if (quotation.ContainerQuantity > 5 && quotation.NatureOfJob.Contains("Quarantine") || quotation.NatureOfJob.Contains("Fumigation"))
+            {
+                discount = 0.025m; // 2.5% discount
+                if (quotation.ContainerQuantity > 10)
+                {
+                    discount = 0.10m; // 10% discount for over 10 containers
+                }
+            }
+            else if (quotation.ContainerQuantity > 5)
+            {
+                discount = 0.05m; // 5% discount
+            }
+
+            decimal finalAmount = initialAmount * (1 - discount);
+
+            // Update the UI fields with calculated amounts
+            InitialAmountTextBlock.Text = $"Initial Amount: {initialAmount:C}";
+            FinalAmountTextBlock.Text = $"Final Amount: {finalAmount:C}";
+
+            // Store the calculated values in the quotation object
+            quotation.TotalAmount = initialAmount;
+            quotation.Discount = discount;
+            quotation.FinalAmount = finalAmount;
+
+            // Save changes back to the database
+            using (var context = new AppDbContext())
+            {
+                var quotationToUpdate = context.Quotations.FirstOrDefault(q => q.Id == _quotationId);
+                if (quotationToUpdate != null)
+                {
+                    quotationToUpdate.TotalAmount = initialAmount;
+                    quotationToUpdate.Discount = discount;
+                    quotationToUpdate.FinalAmount = finalAmount;
+                    context.SaveChanges();
+                }
+            }
         }
 
         private void AcceptQuotation_Click(object sender, RoutedEventArgs e)
@@ -59,12 +106,9 @@ namespace InterportCargoWPF.Views
 
         private void RejectQuotation_Click(object sender, RoutedEventArgs e)
         {
-            string rejectionReason = Microsoft.VisualBasic.Interaction.InputBox("Enter the reason for rejection:",
-                "Reject Quotation", "Incomplete information");
+            string rejectionReason = Microsoft.VisualBasic.Interaction.InputBox("Enter the reason for rejection:", "Reject Quotation", "Incomplete information");
             UpdateQuotationStatus("Rejected", rejectionReason);
         }
-
-        public event Action QuotationUpdated;
 
         private void UpdateQuotationStatus(string status, string rejectionReason = null)
         {
@@ -74,16 +118,9 @@ namespace InterportCargoWPF.Views
                 if (quotation != null)
                 {
                     quotation.Status = status;
-
-                    if (status == "Accepted" && ApplyDiscountCheckBox.IsChecked == true)
-                    {
-                        quotation.Discount = DetermineDiscount(quotation);
-                        quotation.FinalAmount = quotation.TotalAmount * (1 - quotation.Discount);
-                    }
-
                     context.SaveChanges();
 
-                    // Notify customer of status change
+                    // Notify customer of the status change
                     var notificationMessage = status == "Rejected"
                         ? $"Your quotation was rejected. Reason: {rejectionReason}"
                         : "Your quotation has been accepted.";
@@ -97,25 +134,19 @@ namespace InterportCargoWPF.Views
                     };
                     context.Notifications.Add(notification);
                     context.SaveChanges();
+
+                    // Raise the QuotationUpdated event
+                    QuotationUpdated?.Invoke();
                 }
             }
 
             MessageBox.Show($"Quotation {status} successfully.");
-
-            // Raise the event to signal that the quotation has been updated
-            QuotationUpdated?.Invoke();
-
             NavigationService.GoBack();
         }
-        
-        private decimal DetermineDiscount(Quotation quotation)
-        {
-            // Implement discount logic based on criteria.
-            // For example, apply a 10% discount if the nature of the job contains the word "special"
-            return quotation.NatureOfJob.Contains("special") ? 0.1m : 0;
-        }
 
+        private void ViewRateSchedule_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new RateScheduleViewPage());
+        }
     }
-    
-    
 }

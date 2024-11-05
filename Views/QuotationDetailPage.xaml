@@ -34,6 +34,11 @@
 
             <TextBlock Text="Additional Requirements:" FontWeight="Bold"/>
             <TextBlock x:Name="AdditionalRequirementsTextBlock" Margin="0,0,0,10"/>
+            
+            <TextBlock x:Name="InitialAmountTextBlock" FontSize="16" Margin="10" Text="Initial Amount: " />
+            <TextBlock x:Name="FinalAmountTextBlock" FontSize="16" Margin="10" Text="Final Amount: " />
+
+
 
             <!-- Checkbox for applying discount -->
             <CheckBox x:Name="ApplyDiscountCheckBox" Content="Apply Discount" Margin="0,10,0,10"/>

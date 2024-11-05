@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Linq;
 using InterportCargoWPF.Database;
 using InterportCargoWPF.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace InterportCargoWPF.Views
 {
@@ -25,6 +26,7 @@ namespace InterportCargoWPF.Views
             {
                 using (var context = new AppDbContext())
                 {
+                    // Load quotations associated with the current customer
                     var quotations = context.Quotations
                         .Where(q => q.CustomerId == _customerId)
                         .ToList();
@@ -41,6 +43,7 @@ namespace InterportCargoWPF.Views
         {
             if (sender is Button button && button.Tag is int quotationId)
             {
+                // Ask the customer if they want to accept or reject the quotation
                 MessageBoxResult result = MessageBox.Show("Do you want to accept this quotation?", "Respond to Quotation", MessageBoxButton.YesNo);
                 string status = result == MessageBoxResult.Yes ? "Accepted by Customer" : "Rejected by Customer";
                 UpdateCustomerQuotationStatus(quotationId, status);
@@ -49,62 +52,61 @@ namespace InterportCargoWPF.Views
 
         private void UpdateCustomerQuotationStatus(int quotationId, string status)
         {
-            var quotation = Quotations.FirstOrDefault(q => q.Id == quotationId);
-            if (quotation != null)
+            using (var context = new AppDbContext())
             {
-                quotation.Status = status;
-                RefreshQuotationGrid();
-                NotifyQuotationOfficer(quotationId, status);
+                var quotation = context.Quotations.FirstOrDefault(q => q.Id == quotationId);
+                if (quotation != null)
+                {
+                    // Update the status of the quotation based on customer response
+                    quotation.Status = status;
+                    context.SaveChanges();
+                    NotifyQuotationOfficer(quotationId, status);
+                    LoadQuotations(); // Refresh the quotations grid to reflect the new status
+                }
             }
         }
 
         private void NotifyQuotationOfficer(int quotationId, string status)
         {
-            try
+            using (var context = new AppDbContext())
             {
-                using (var context = new AppDbContext())
+                var quotation = context.Quotations.Include(q => q.Customer).FirstOrDefault(q => q.Id == quotationId);
+                if (quotation != null)
                 {
-                    var quotation = context.Quotations.FirstOrDefault(q => q.Id == quotationId);
-                    if (quotation != null)
+                    // Send a notification to the Quotation officer about the customer's response
+                    var notification = new Notification
                     {
-                        quotation.Status = status;
-                        context.SaveChanges();
-                    }
+                        CustomerId = quotation.CustomerId,
+                        Message = $"Customer {quotation.Customer.FullName} has {status.ToLower()} the quotation with ID {quotationId}.",
+                        DateCreated = DateTime.Now,
+                        IsRead = false
+                    };
+                    context.Notifications.Add(notification);
+                    context.SaveChanges();
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred while notifying the officer: {ex.Message}", "Error");
             }
         }
 
         private void LoadNotifications()
         {
-            try
+            using (var context = new AppDbContext())
             {
-                using (var context = new AppDbContext())
+                var notifications = context.Notifications
+                    .Where(n => n.CustomerId == _customerId && !n.IsRead)
+                    .OrderByDescending(n => n.DateCreated)
+                    .ToList();
+
+                if (notifications.Any())
                 {
-                    var notifications = context.Notifications
-                        .Where(n => n.CustomerId == _customerId && !n.IsRead)
-                        .OrderByDescending(n => n.DateCreated)
-                        .ToList();
+                    string notificationMessage = string.Join("\n", notifications.Select(n => n.Message));
+                    MessageBox.Show(notificationMessage, "Notifications");
 
-                    if (notifications.Any())
+                    foreach (var notification in notifications)
                     {
-                        string notificationMessage = string.Join("\n", notifications.Select(n => n.Message));
-                        MessageBox.Show(notificationMessage, "Notifications");
-
-                        foreach (var notification in notifications)
-                        {
-                            notification.IsRead = true;
-                        }
-                        context.SaveChanges();
+                        notification.IsRead = true;
                     }
+                    context.SaveChanges();
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred while loading notifications: {ex.Message}", "Error");
             }
         }
 

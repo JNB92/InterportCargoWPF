@@ -15,6 +15,7 @@
             <TextBlock Text="Notifications" FontWeight="Bold" FontSize="16" Margin="0,50,0,5"/>
             <ListBox x:Name="NotificationsListBox" Width="750" Height="100" 
                      Background="White" BorderBrush="Gray" BorderThickness="1"/>
+            
         </StackPanel>
 
         <!-- Quotations DataGrid -->

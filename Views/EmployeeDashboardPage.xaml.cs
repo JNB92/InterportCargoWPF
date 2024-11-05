@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using InterportCargoWPF.Database;
 using InterportCargoWPF.Models;
-using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace InterportCargoWPF.Views
@@ -59,7 +59,27 @@ namespace InterportCargoWPF.Views
             }
         }
 
-        
+        private void LoadOfficerNotifications()
+        {
+            using (var context = new AppDbContext())
+            {
+                var notifications = context.Notifications
+                    .Where(n => !n.IsRead) // Only load unread notifications
+                    .OrderByDescending(n => n.DateCreated)
+                    .ToList();
+
+                NotificationsListBox.Items.Clear();
+
+                foreach (var notification in notifications)
+                {
+                    NotificationsListBox.Items.Add(notification.Message);
+                    notification.IsRead = true;
+                }
+
+                context.SaveChanges();
+            }
+        }
+
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.Tag is int quotationId)
@@ -67,20 +87,16 @@ namespace InterportCargoWPF.Views
                 var detailPage = new QuotationDetailPage(quotationId);
 
                 // Subscribe to the QuotationUpdated event to refresh the dashboard when returning
-                detailPage.QuotationUpdated += () => LoadQuotations();
+                detailPage.QuotationUpdated += LoadQuotations;
 
                 NavigationService?.Navigate(detailPage);
             }
         }
 
-    
-
         private void ActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
             {
-                MessageBox.Show("ComboBox Selection Changed");
-
                 if (selectedItem.Tag is int quotationId)
                 {
                     string action = selectedItem.Content.ToString();
@@ -100,7 +116,6 @@ namespace InterportCargoWPF.Views
                 }
             }
         }
-
 
         private void AcceptQuotation(int quotationId)
         {
@@ -201,7 +216,7 @@ namespace InterportCargoWPF.Views
         {
             LoadQuotations();
         }
-        
+
         private void LoadNotifications()
         {
             try
@@ -212,10 +227,8 @@ namespace InterportCargoWPF.Views
                         .Where(n => !n.IsRead) // Filter for unread notifications if needed
                         .ToList();
 
-                    // Clear the ListBox before loading
                     NotificationsListBox.Items.Clear();
 
-                    // Display notifications in the ListBox
                     foreach (var notification in notifications)
                     {
                         NotificationsListBox.Items.Add(notification.Message);
@@ -240,7 +253,5 @@ namespace InterportCargoWPF.Views
                 }
             }
         }
-
-
     }
 }

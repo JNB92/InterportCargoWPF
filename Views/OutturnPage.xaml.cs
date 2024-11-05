@@ -1,11 +1,18 @@
 ﻿using System.Windows.Controls;
 
-namespace InterportCargoWPF.Views;
-
-public partial class OutturnPage : Page
+namespace InterportCargoWPF.Views
 {
-    public OutturnPage()
+    /// <summary>
+    /// Represents the outturn page in the application, where outturn-related functionalities can be implemented.
+    /// </summary>
+    public partial class OutturnPage : Page
     {
-        InitializeComponent();
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OutturnPage"/> class.
+        /// </summary>
+        public OutturnPage()
+        {
+            InitializeComponent();
+        }
     }
 }

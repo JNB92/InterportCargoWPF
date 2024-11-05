@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using InterportCargoWPF.Database;
 using InterportCargoWPF.Views;
 
@@ -25,6 +26,23 @@ namespace InterportCargoWPF.Views
 
             // Do not alter the button visibility here; only handle it after successful login.
         }
+        public void ShowLoginSuccessMessage()
+        {
+            LoginSuccessTextBlock.Visibility = Visibility.Visible;
+
+            // Set up a DispatcherTimer to hide the message after 5 seconds
+            DispatcherTimer timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(5)
+            };
+            timer.Tick += (s, args) =>
+            {
+                LoginSuccessTextBlock.Visibility = Visibility.Collapsed;
+                timer.Stop();
+            };
+            timer.Start();
+        }
+
 
         private void OpenRegisterWindow_Click(object sender, RoutedEventArgs e)
         {
@@ -50,13 +68,16 @@ namespace InterportCargoWPF.Views
 
                     if (isPasswordCorrect)
                     {
-                        MessageBox.Show($"Login successful! Welcome, {customer.FirstName}.");
-                        
+                        //MessageBox.Show($"Login successful! Welcome, {customer.FirstName} {customer.LastName}.");
+                
                         // Set the LoggedInCustomerId in SessionManager
                         SessionManager.LoggedInCustomerId = customer.Id;
 
                         // Navigate to the landing page on successful login
                         LoginSuccessful();
+
+                        // Show the universal "Login Successful" message
+                        ShowLoginSuccessMessage();
                     }
                     else
                     {
@@ -70,6 +91,39 @@ namespace InterportCargoWPF.Views
             }
         }
 
+        public void ShowCantGoBackMessage()
+        {
+            CantgobackTextBlock.Visibility = Visibility.Visible;
+
+            // Set up a DispatcherTimer to hide the message after 5 seconds
+            DispatcherTimer timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(5)
+            };
+            timer.Tick += (s, args) =>
+            {
+                CantgobackTextBlock.Visibility = Visibility.Collapsed;
+                timer.Stop();
+            };
+            timer.Start();
+        }
+       
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainFrame.CanGoBack && MainFrame.Content != this)
+            {
+                MainFrame.GoBack();
+            }
+            else
+            {
+                // Show the "can't go back" message on any page
+                ShowCantGoBackMessage();
+            }
+        }
+
+        
+
         public void LoginSuccessful()
         {
             LoginForm.Visibility = Visibility.Collapsed;
@@ -82,28 +136,14 @@ namespace InterportCargoWPF.Views
             LogoutButton.Visibility = Visibility.Visible;
         }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Go back to the previous page in the Frame, if possible
-            if (MainFrame.CanGoBack)
-            {
-                MainFrame.GoBack();
-            }
-            else
-            {
-                // If there's no page to go back to, reset to the login form
-                MainFrame.Visibility = Visibility.Collapsed;
-                LoginForm.Visibility = Visibility.Visible;
-                EmployeeLoginButton.Visibility = Visibility.Visible;
-                BackButton.Visibility = Visibility.Collapsed;
-                LogoutButton.Visibility = Visibility.Collapsed;
-            }
-        }
-
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
-            // Clear session or perform any logout-related operations
-            MessageBox.Show("You have been logged out.");
+            EmailBox.Text = string.Empty;
+            PasswordBox.Password = string.Empty;
+            
+            // Display the logout message
+            LogoutMessageTextBlock.Text = "You have been logged out.";
+            LogoutMessageTextBlock.Visibility = Visibility.Visible;
 
             // Reset to the login form and update button visibility
             LoginForm.Visibility = Visibility.Visible;
@@ -112,6 +152,11 @@ namespace InterportCargoWPF.Views
             EmployeeLoginButton.Visibility = Visibility.Visible;
             BackButton.Visibility = Visibility.Collapsed;
             LogoutButton.Visibility = Visibility.Collapsed;
+        }
+        private void ClearLogoutMessage(object sender, RoutedEventArgs e)
+        {
+            // Hide the logout message when the user starts entering credentials
+            LogoutMessageTextBlock.Visibility = Visibility.Collapsed;
         }
     }
 }

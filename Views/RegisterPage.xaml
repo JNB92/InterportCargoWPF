@@ -4,40 +4,65 @@
       Title="Register">
 
     <Grid>
+        <!-- Main Grid Structure -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Header Row -->
+            <RowDefinition Height="*"/>     <!-- Content Row -->
+            <RowDefinition Height="Auto"/>  <!-- Footer Row -->
+        </Grid.RowDefinitions>
+
         <!-- Header -->
-        <Grid VerticalAlignment="Top" Height="50" Background="#E0E0E0">
+        <Grid Grid.Row="0" Height="50" Background="#E0E0E0">
             <TextBlock Text="INTERPORT CARGO" VerticalAlignment="Center" 
                        HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" 
                        Margin="10,0,0,0"/>
         </Grid>
-    
-        <Border HorizontalAlignment="Center" VerticalAlignment="Center" 
-                Padding="70" Width="500" Height="800">
+
+        <!-- Registration Form (Centered) -->
+        <Border Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                Padding="30" Width="500" BorderBrush="Gray" BorderThickness="1">
             
             <StackPanel Margin="10">
+                <!-- Title -->
                 <TextBlock Text="Customer Registration" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" 
                            Margin="0, 0, 0, 20"/>
                 
+                <!-- First Name -->
                 <Label Content="First Name" />
-                <TextBox x:Name="FirstNameBox"/>
+                <TextBox x:Name="FirstNameBox" />
 
+                <!-- Last Name -->
                 <Label Content="Last Name" />
                 <TextBox x:Name="LastNameBox" />
 
+                <!-- Email -->
                 <Label Content="Email" />
                 <TextBox x:Name="EmailBox" />
 
+                <!-- Phone Number -->
                 <Label Content="Phone Number" />
-                <TextBox x:Name="PhoneNumberBox"/>
+                <TextBox x:Name="PhoneNumberBox" />
 
+                <!-- Company Name (Optional) -->
+                <Label Content="Company Name (Optional)" />
+                <TextBox x:Name="CompanyNameBox" />
+
+                <!-- Address -->
+                <Label Content="Address" />
+                <TextBox x:Name="AddressBox" />
+
+                <!-- Password -->
                 <Label Content="Password" />
                 <PasswordBox x:Name="PasswordBox" />
 
+                <!-- Buttons -->
                 <Button Content="Register" Click="RegisterButton_Click" Background="Black" Foreground="White" Width="250" Height="40" />
                 <Button Content="Return to Login" Click="ReturnToLogin_Click" />
-            </StackPanel>
+                </StackPanel>
         </Border>
-        <Grid VerticalAlignment="Bottom" Height="50" Background="#E0E0E0">
+
+        <!-- Footer -->
+        <Grid Grid.Row="2" Height="50" Background="#E0E0E0">
             <TextBlock Text="InterportCargo© 2024" VerticalAlignment="Center" 
                        HorizontalAlignment="Center" FontSize="10"/>
         </Grid>

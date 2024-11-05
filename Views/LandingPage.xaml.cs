@@ -9,6 +9,7 @@ namespace InterportCargoWPF.Views
         {
             InitializeComponent();
         }
+
         private void ViewMyQuotations_Click(object sender, RoutedEventArgs e)
         {
             int loggedInCustomerId = SessionManager.LoggedInCustomerId;
@@ -19,43 +20,27 @@ namespace InterportCargoWPF.Views
                 return;
             }
 
-            var mainWindow = MainWindow.Instance;
-            mainWindow.MainFrame.Visibility = Visibility.Visible;
-            mainWindow.MainFrame.Navigate(new CustomerQuotationsPage(loggedInCustomerId));
+            // Navigate to CustomerQuotationsPage within the ContentFrame
+            ContentFrame.Navigate(new CustomerQuotationsPage(loggedInCustomerId));
         }
-
-
 
         private void GoToQuotation_Click(object sender, RoutedEventArgs e)
         {
-            // Retrieve the logged-in customer's ID from SessionManager
             int loggedInCustomerId = SessionManager.LoggedInCustomerId;
 
-            // Navigate to the QuotationPage using the MainFrame in MainWindow
-            var mainWindow = MainWindow.Instance;
-
-            // Set MainFrame's visibility if it's not already visible
-            mainWindow.MainFrame.Visibility = Visibility.Visible;
-
-            // Navigate to QuotationPage within the MainFrame, passing the loggedInCustomerId
-            mainWindow.MainFrame.Navigate(new QuotationPage(loggedInCustomerId));
-
-            // Optionally, hide the current content if needed
-            this.Visibility = Visibility.Collapsed;
+            // Navigate to QuotationPage within the ContentFrame
+            ContentFrame.Navigate(new QuotationPage(loggedInCustomerId));
         }
-
-        private void Logout_Click(object sender, RoutedEventArgs e)
+        
+        private void OutturnButton_Click(object sender, RoutedEventArgs e)
         {
-            // Ensure the current application is referenced properly
-            var mainWindow = MainWindow.Instance;
-
-            // Hide the frame and show the login form
-            mainWindow.MainFrame.Visibility = Visibility.Collapsed;
-            mainWindow.LoginForm.Visibility = Visibility.Visible;
-
-            // Optionally, clear the login fields
-            mainWindow.EmailBox.Text = string.Empty;
-            mainWindow.PasswordBox.Password = string.Empty;
+            NavigationService.Navigate(new OutturnPage());
         }
+
+        private void BookingButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new BookingPage());
+        }
+
     }
 }

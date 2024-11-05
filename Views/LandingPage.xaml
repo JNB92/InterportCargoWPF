@@ -1,15 +1,27 @@
 ﻿<Page x:Class="InterportCargoWPF.Views.LandingPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Title="LandingPage" Height="650" Width="800">
+      Title="LandingPage" 
+      HorizontalAlignment="Stretch" 
+      VerticalAlignment="Stretch">
 
-    <Grid>
-        <TextBlock Text="Welcome to Interport Cargo" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10"/>
-        
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
-            <Button Content="Go to Quotation Request" Width="200" Height="50" Click="GoToQuotation_Click"/>
-            <Button Content="View My Quotations" Width="200" Height="50" Click="ViewMyQuotations_Click"/>
-            <Button Content="Logout" Width="200" Height="50" Click="Logout_Click"/>
+    <DockPanel LastChildFill="True">
+        <!-- Top header with welcome message -->
+        <TextBlock Text="Customer Dashboard" FontSize="24" FontWeight="Bold" 
+                   HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,70,0,10" DockPanel.Dock="Top"/>
+
+        <!-- Sidebar with navigation buttons on the left -->
+        <StackPanel Width="200" VerticalAlignment="Top" Margin="10" DockPanel.Dock="Left">
+            <Button Content="Go to Quotation Request" Width="180" Height="50" Margin="0,10" Click="GoToQuotation_Click"/>
+            <Button Content="View My Quotations" Width="180" Height="50" Margin="0,10" Click="ViewMyQuotations_Click"/>
+            <Button Content="Outturn" Click="OutturnButton_Click" Width="180" Height="50" Margin="0,10"/>
+            <Button Content="Booking" Click="BookingButton_Click" Width="180" Height="50" Margin="0,10"/>
+
         </StackPanel>
-    </Grid>
+
+        <!-- Main content area that expands dynamically -->
+        <Border Background="#F5F5F5" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Frame x:Name="ContentFrame" NavigationUIVisibility="Hidden"/>
+        </Border>
+    </DockPanel>
 </Page>

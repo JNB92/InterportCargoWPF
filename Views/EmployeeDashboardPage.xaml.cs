@@ -27,8 +27,18 @@ namespace InterportCargoWPF.Views
                 using (var context = new AppDbContext())
                 {
                     var quotationsFromDb = context.Quotations
-                        .Include(q => q.Customer) // Include related Customer data
+                        .Include(q => q.Customer)
                         .ToList();
+
+                    // Set status to pending if it hasn't been assigned
+                    foreach (var quotation in quotationsFromDb)
+                    {
+                        if (string.IsNullOrEmpty(quotation.Status))
+                        {
+                            quotation.Status = "Pending";
+                            context.SaveChanges(); // Update database with the initial status
+                        }
+                    }
 
                     Quotations = new ObservableCollection<Quotation>(quotationsFromDb);
                     QuotationsDataGrid.ItemsSource = Quotations;
@@ -40,6 +50,7 @@ namespace InterportCargoWPF.Views
             }
         }
 
+
         private void AcceptButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.Tag is int quotationId)
@@ -47,19 +58,24 @@ namespace InterportCargoWPF.Views
                 var quotation = Quotations.FirstOrDefault(q => q.Id == quotationId);
                 if (quotation != null)
                 {
-                    // Assuming some business logic here to determine the TotalAmount
-                    decimal baseRate = 1000; // Example base rate
-                    quotation.TotalAmount = baseRate;
+                    decimal discount = DetermineDiscount(quotation);
+                    quotation.Discount = discount;
+                    quotation.FinalAmount = quotation.TotalAmount * (1 - discount);
 
-                    // Check discount eligibility and apply if any
-                    quotation.Discount = DetermineDiscount(quotation); // Implement this method based on criteria
-                    quotation.FinalAmount = quotation.TotalAmount * (1 - quotation.Discount);
-
-                    // Update the status and save
                     UpdateQuotationStatus(quotationId, "Accepted");
                 }
             }
         }
+        
+        private void PendingButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is int quotationId)
+            {
+                // Set the status of the quotation to "Pending"
+                UpdateQuotationStatus(quotationId, "Pending");
+            }
+        }
+
         private decimal DetermineDiscount(Quotation quotation)
         {
             // Implement your discount logic here. For example:

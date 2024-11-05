@@ -32,7 +32,8 @@ namespace InterportCargoWPF.Views
 
                     if (employee != null && BCrypt.Net.BCrypt.Verify(password, employee.PasswordHash))
                     {
-                        MessageBox.Show("Login successful!");
+                        MainWindow.Instance.ShowLoginSuccessMessage();
+                        // MessageBox.Show("Login successful!");
                         MainWindow.Instance.MainFrame.Navigate(new EmployeeDashboardPage());
                         MainWindow.Instance.EmployeeLoginButton.Visibility = Visibility.Collapsed;
                         MainWindow.Instance.BackButton.Visibility = Visibility.Visible;

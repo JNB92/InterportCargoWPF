@@ -22,8 +22,8 @@
             <ComboBoxItem Content="CIO"/>
         </ComboBox>
         
-        <Label Content="Employee ID"/>
-        <TextBox x:Name="EmployeeIDBox" />
+        <!-- <Label Content="Employee ID"/> -->
+        <!-- <TextBox x:Name="EmployeeIDBox" /> -->
         
         <Label Content="First Name" />
         <TextBox x:Name="FirstNameBox"/>
@@ -36,6 +36,9 @@
 
         <Label Content="Phone Number" />
         <TextBox x:Name="PhoneNumberBox"/>
+        
+        <Label Content="Address" />
+        <TextBox x:Name="AddressBox"/>
 
         <Label Content="Password" />
         <PasswordBox x:Name="PasswordBox" />

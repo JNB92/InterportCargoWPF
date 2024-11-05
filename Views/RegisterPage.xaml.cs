@@ -1,16 +1,13 @@
 ﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using BCrypt.Net;
 using InterportCargoWPF.Database;
 using InterportCargoWPF.Models;
-using BCrypt.Net;
 
 namespace InterportCargoWPF.Views
 {
-    /// <summary>
-    /// Interaction logic for RegisterPage.xaml
-    /// </summary>
-    public partial class RegisterPage : Page  // Inherit from Page
+    public partial class RegisterPage : Page
     {
         public RegisterPage()
         {
@@ -19,58 +16,79 @@ namespace InterportCargoWPF.Views
 
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
+            // Retrieve input values
             string firstName = FirstNameBox.Text;
             string lastName = LastNameBox.Text;
             string email = EmailBox.Text;
             string phoneNumber = PhoneNumberBox.Text;
             string password = PasswordBox.Password;
+            string companyName = CompanyNameBox.Text;
+            string address = AddressBox.Text;
 
+            // Validate inputs
             if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName) ||
                 string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(phoneNumber) ||
-                string.IsNullOrWhiteSpace(password))
+                string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(address))
             {
-                MessageBox.Show("All fields are required.");
+                MessageBox.Show("All fields except Company Name are required.");
                 return;
             }
 
-            // Hash the password
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+            // Check email format (basic validation)
+            if (!IsValidEmail(email))
+            {
+                MessageBox.Show("Please enter a valid email address.");
+                return;
+            }
 
-            // Create a new Customer object
-            var newCustomer = new Customer(firstName, lastName, email, phoneNumber, hashedPassword);
-
-            // Save the new customer to the database (using Entity Framework)
             using (var context = new AppDbContext())
             {
-                // Check if the customer already exists
-                var existingCustomer = context.Customers.SingleOrDefault(c => c.Email == email);
-                if (existingCustomer == null)
-                {
-                    context.Customers.Add(newCustomer);
-                    context.SaveChanges();
-
-                    MessageBox.Show("Registration successful!");
-
-                    // Navigate back to login page after successful registration
-                    ReturnToLogin_Click(this, new RoutedEventArgs());
-                }
-                else
+                // Check if email is already registered
+                if (context.Customers.Any(c => c.Email == email))
                 {
                     MessageBox.Show("A customer with this email already exists.");
+                    return;
                 }
+
+                // Hash the password
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+
+                // Create a new Customer object
+                var newCustomer = new Customer
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Email = email,
+                    PhoneNumber = phoneNumber,
+                    Password = hashedPassword,
+                    Company = string.IsNullOrWhiteSpace(companyName) ? null : companyName,
+                    Address = address
+                };
+
+                // Add and save the new customer to the database
+                context.Customers.Add(newCustomer);
+                context.SaveChanges();
+
+                MessageBox.Show("Registration successful!");
+
+                // Navigate back to the login page
+                ReturnToLogin_Click(this, new RoutedEventArgs());
             }
         }
 
         private void ReturnToLogin_Click(object sender, RoutedEventArgs e)
         {
-            // Get the window that contains this page, which is MainWindow
             if (Window.GetWindow(this) is MainWindow mainWindow)
             {
-                // Hide the frame and show the login form within MainWindow
                 mainWindow.MainFrame.Visibility = Visibility.Collapsed;
                 mainWindow.LoginForm.Visibility = Visibility.Visible;
             }
         }
 
+        // Simple email validation method
+        private bool IsValidEmail(string email)
+        {
+            return email.Contains("@") && email.Contains(".");
+        }
     }
 }

@@ -16,6 +16,17 @@
                            Margin="0,10,0,10" />
             </Border>
 
+            <!-- Scrollable Notifications Section -->
+            <Border Background="White" BorderBrush="Gray" BorderThickness="1"
+                    CornerRadius="5" Padding="5" Margin="10,10,10,0" Height="70" DockPanel.Dock="Top">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <TextBlock Text="Notifications: " FontWeight="Bold" FontSize="14" Margin="0,0,5,0" />
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                        <StackPanel x:Name="NotificationsPanel" Orientation="Horizontal" />
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+
             <!-- Sidebar with navigation buttons on the left -->
             <StackPanel Width="220" Background="#E8F1FA" DockPanel.Dock="Left">
                 <TextBlock Text="Navigation" FontSize="18" FontWeight="SemiBold"
@@ -35,7 +46,7 @@
             <!-- Main content area that expands dynamically -->
             <Border Background="White" Margin="10" Padding="20" CornerRadius="8" BorderBrush="#D3D3D3"
                     BorderThickness="1">
-                <Frame x:Name="ContentFrame" NavigationUIVisibility="Hidden" />
+                <Frame x:Name="ContentFrame" NavigationUIVisibility="Hidden" Margin="0" />
             </Border>
 
         </DockPanel>

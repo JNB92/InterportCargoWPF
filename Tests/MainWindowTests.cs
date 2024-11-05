@@ -8,6 +8,7 @@ namespace InterportCargoWPF.Tests
     public class UserService
     {
         private readonly List<User> _users = new List<User>();
+        private readonly List<Quotation> _quotations = new List<Quotation>();
 
         /// <summary>
         /// Registers a new user with the provided details.
@@ -67,11 +68,46 @@ namespace InterportCargoWPF.Tests
 
             if (BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
-                return user.Id; // Successful login
+                SessionManager.LoggedInCustomerId = user.Id; // Successful login
+                return user.Id;
             }
 
             return -1; // Invalid password
         }
+
+        /// <summary>
+        /// Logs out the currently logged-in user.
+        /// </summary>
+        public void Logout()
+        {
+            SessionManager.LoggedInCustomerId = 0; // Clear the session
+        }
+
+        /// <summary>
+        /// Submits a quotation request with the provided details.
+        /// </summary>
+        /// <param name="customerId">The ID of the customer submitting the quotation.</param>
+        /// <param name="details">The details of the quotation.</param>
+        /// <returns>The ID of the created quotation.</returns>
+        public int SubmitQuotation(int customerId, string details)
+        {
+            var newQuotation = new Quotation
+            {
+                Id = _quotations.Count + 1,
+                CustomerId = customerId,
+                Details = details,
+                Status = "Pending"
+            };
+
+            _quotations.Add(newQuotation);
+            return newQuotation.Id; // Return new quotation ID
+        }
+
+        /// <summary>
+        /// Gets all quotations submitted by customers.
+        /// </summary>
+        /// <returns>A list of all quotations.</returns>
+        public IEnumerable<Quotation> GetAllQuotations() => _quotations;
     }
 
     /// <summary>
@@ -85,6 +121,17 @@ namespace InterportCargoWPF.Tests
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string Password { get; set; }
+    }
+
+    /// <summary>
+    /// Represents a quotation submitted by a user.
+    /// </summary>
+    public class Quotation
+    {
+        public int Id { get; set; }
+        public int CustomerId { get; set; }
+        public string Details { get; set; }
+        public string Status { get; set; } // e.g., Pending, Accepted, Rejected
     }
 
     // Unit tests for UserService
@@ -184,6 +231,58 @@ namespace InterportCargoWPF.Tests
 
             // Assert
             Assert.That(result, Is.EqualTo(0)); // Should return 0 for non-existent user
+        }
+
+        /// <summary>
+        /// Tests that logging out resets the logged-in user ID.
+        /// </summary>
+        [Test]
+        public void Logout_ResetsLoggedInUser()
+        {
+            // Arrange
+            _userService.Register("John", "Doe", "john@example.com", "123456789", "password123");
+            _userService.Login("john@example.com", "password123");
+
+            // Act
+            _userService.Logout();
+
+            // Assert
+            Assert.That(SessionManager.LoggedInCustomerId, Is.EqualTo(0)); // User should be logged out
+        }
+
+        /// <summary>
+        /// Tests that submitting a quotation returns the correct quotation ID.
+        /// </summary>
+        [Test]
+        public void SubmitQuotation_ValidDetails_ReturnsQuotationId()
+        {
+            // Arrange
+            var customerId = _userService.Register("John", "Doe", "john@example.com", "123456789", "password123");
+            var details = "Quotation for shipping goods.";
+
+            // Act
+            var quotationId = _userService.SubmitQuotation(customerId, details);
+
+            // Assert
+            Assert.That(quotationId, Is.EqualTo(1)); // Expect the first quotation ID to be 1
+        }
+
+        /// <summary>
+        /// Tests that retrieving all quotations returns the expected count.
+        /// </summary>
+        [Test]
+        public void GetAllQuotations_ReturnsAllSubmittedQuotations()
+        {
+            // Arrange
+            var customerId = _userService.Register("John", "Doe", "john@example.com", "123456789", "password123");
+            _userService.SubmitQuotation(customerId, "First quotation.");
+            _userService.SubmitQuotation(customerId, "Second quotation.");
+
+            // Act
+            var quotations = _userService.GetAllQuotations();
+
+            // Assert
+            Assert.That(quotations.Count(), Is.EqualTo(2)); // Should return 2 quotations
         }
     }
 }

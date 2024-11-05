@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using InterportCargoWPF.Database;
-using InterportCargoWPF.Models; // Importing the correct namespace
+using InterportCargoWPF.Models;
 
 namespace InterportCargoWPF.Views
 {
     public partial class RateScheduleViewPage : Page
     {
-        public ObservableCollection<InterportCargoWPF.Models.RateSchedule> RateSchedules { get; set; } // Specifying the fully qualified name
+        public ObservableCollection<RateSchedule> RateSchedules { get; set; }
 
         public RateScheduleViewPage()
         {
@@ -22,17 +20,77 @@ namespace InterportCargoWPF.Views
         {
             try
             {
-                using (var context = new AppDbContext())
+                // Hard-coding the rate schedule data
+                RateSchedules = new ObservableCollection<RateSchedule>
                 {
-                    // Fetch rate schedule data from the database
-                    var rates = context.RateSchedules.ToList();
+                    new RateSchedule
+                    {
+                        Type = "Wharf Booking Fee",
+                        TwentyFeetContainer = 60.0m,
+                        FortyFeetContainer = 70.0m,
+                        DepotCharges = 0.0m, // Update if required
+                        LclDeliveryCharges = 400.0m // Example value from LCL Delivery Depot
+                    },
+                    new RateSchedule
+                    {
+                        Type = "Lift On/Lift Off",
+                        TwentyFeetContainer = 80.0m,
+                        FortyFeetContainer = 120.0m,
+                        DepotCharges = 0.0m,
+                        LclDeliveryCharges = 0.0m
+                    },
+                    new RateSchedule
+                    {
+                        Type = "Fumigation",
+                        TwentyFeetContainer = 220.0m,
+                        FortyFeetContainer = 280.0m,
+                        DepotCharges = 0.0m,
+                        LclDeliveryCharges = 0.0m
+                    },
+                    new RateSchedule
+                    {
+                        Type = "LCL Delivery Depot",
+                        TwentyFeetContainer = 400.0m,
+                        FortyFeetContainer = 500.0m,
+                        DepotCharges = 0.0m,
+                        LclDeliveryCharges = 0.0m
+                    },
+                    new RateSchedule
+                    {
+                        Type = "Tailgate Inspection Fee",
+                        TwentyFeetContainer = 120.0m,
+                        FortyFeetContainer = 160.0m,
+                        DepotCharges = 0.0m,
+                        LclDeliveryCharges = 0.0m
+                    },
+                    new RateSchedule
+                    {
+                        Type = "Storage Fee",
+                        TwentyFeetContainer = 240.0m,
+                        FortyFeetContainer = 300.0m,
+                        DepotCharges = 0.0m,
+                        LclDeliveryCharges = 0.0m
+                    },
+                    new RateSchedule
+                    {
+                        Type = "Facility Fee",
+                        TwentyFeetContainer = 70.0m,
+                        FortyFeetContainer = 100.0m,
+                        DepotCharges = 0.0m,
+                        LclDeliveryCharges = 0.0m
+                    },
+                    new RateSchedule
+                    {
+                        Type = "Wharf Inspection Fee",
+                        TwentyFeetContainer = 60.0m,
+                        FortyFeetContainer = 90.0m,
+                        DepotCharges = 0.0m,
+                        LclDeliveryCharges = 0.0m
+                    }
+                };
 
-                    // Initialize ObservableCollection with the correct namespace and class name
-                    RateSchedules = new ObservableCollection<InterportCargoWPF.Models.RateSchedule>(rates);
-
-                    // Set the DataGrid's data source
-                    RateScheduleDataGrid.ItemsSource = RateSchedules;
-                }
+                // Assign the data to the DataGrid's source
+                RateScheduleDataGrid.ItemsSource = RateSchedules;
             }
             catch (Exception ex)
             {

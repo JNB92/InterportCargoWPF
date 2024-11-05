@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Linq;
 using InterportCargoWPF.Database;
 using InterportCargoWPF.Models;
 
@@ -10,16 +10,25 @@ namespace InterportCargoWPF.Views
     public partial class QuotationPage : Page
     {
         private int _loggedInCustomerId;
-        
 
-        public QuotationPage(int loggedInCustomerId) // Pass logged-in customer ID
+        public QuotationPage(int loggedInCustomerId)
         {
             InitializeComponent();
-            _loggedInCustomerId = loggedInCustomerId; // Store the customer ID for later use
+            _loggedInCustomerId = loggedInCustomerId;
+            GenerateQuotationId(); // Auto-generate and display the Quotation ID
         }
+
+        private void GenerateQuotationId()
+        {
+            using (var context = new AppDbContext())
+            {
+                int newQuotationId = context.Quotations.Max(q => (int?)q.Id) + 1 ?? 1;
+                QuotationIdTextBlock.Text = newQuotationId.ToString();
+            }
+        }
+
         private void ViewRateSchedule_Click(object sender, RoutedEventArgs e)
         {
-            // Open RateScheduleViewPage for reference
             NavigationService?.Navigate(new RateScheduleViewPage());
         }
 
@@ -29,8 +38,6 @@ namespace InterportCargoWPF.Views
             string origin = OriginBox.Text;
             string destination = DestinationBox.Text;
             string cargoType = CargoTypeBox.Text;
-
-            // Get the selected container quantity from ComboBox
             var selectedComboBoxItem = ContainerQuantityComboBox.SelectedItem as ComboBoxItem;
             if (selectedComboBoxItem == null)
             {
@@ -38,45 +45,37 @@ namespace InterportCargoWPF.Views
                 return;
             }
 
-            // Extract the content from ComboBoxItem and convert it to an integer
             int containerQuantity = int.Parse(selectedComboBoxItem.Content.ToString());
-
-            string additionalRequirements = AdditionalRequirementsBox.Text;
+            string natureOfJob = NatureOfJobComboBox.SelectedItem?.ToString();
             var selectedDate = TransportationDatePicker.SelectedDate;
 
-            // Validate required fields
             if (string.IsNullOrWhiteSpace(origin) || string.IsNullOrWhiteSpace(destination) ||
-                string.IsNullOrWhiteSpace(cargoType) || selectedDate == null)
+                string.IsNullOrWhiteSpace(cargoType) || selectedDate == null || string.IsNullOrWhiteSpace(natureOfJob))
             {
                 MessageBox.Show("Please fill in all required fields.");
                 return;
             }
 
-            // Validate that a valid customer ID is available
             if (_loggedInCustomerId <= 0)
             {
                 MessageBox.Show("Customer ID is not valid. Please log in again.");
                 return;
             }
 
-            // Create a new Quotation object
             var newQuotation = new Quotation
             {
                 Origin = origin,
                 Destination = destination,
                 CargoType = cargoType,
                 ContainerQuantity = containerQuantity,
-                NatureOfJob = additionalRequirements,
+                NatureOfJob = natureOfJob,
                 TransportationDate = selectedDate.Value,
-                CustomerId = _loggedInCustomerId, // Assign the logged-in customer's ID
-                Status = "Pending" // Set initial status to Pending
+                CustomerId = _loggedInCustomerId,
+                Status = "Pending"
             };
 
-
-            // Save the quotation to the database
             using (var context = new AppDbContext())
             {
-                // Verify if the customer exists
                 var customerExists = context.Customers.Any(c => c.Id == _loggedInCustomerId);
                 if (!customerExists)
                 {
@@ -86,14 +85,22 @@ namespace InterportCargoWPF.Views
 
                 context.Quotations.Add(newQuotation);
                 context.SaveChanges();
+
+                // Create a notification for the quotation officer
+                var notification = new Notification
+                {
+                    CustomerId = _loggedInCustomerId,
+                    Message = $"New quotation request submitted by Customer ID: {_loggedInCustomerId}.",
+                    DateCreated = DateTime.Now
+                };
+                context.Notifications.Add(notification);
+                context.SaveChanges();
             }
 
-            // Confirm submission
             MessageBox.Show("Quotation successfully submitted!");
-
-            // Navigate back to the main page or another target page
-            NavigationService?.Navigate(new LandingPage());
+            MainWindow.Instance.MainFrame.GoBack();
         }
+
 
         private void OnDateSelected(object sender, SelectionChangedEventArgs e)
         {

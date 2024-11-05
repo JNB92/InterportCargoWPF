@@ -3,6 +3,7 @@ using System;
 using InterportCargoWPF.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InterportCargoWPF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241105083144_AddContainerColumnsToRateSchedule")]
+    partial class AddContainerColumnsToRateSchedule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.33");
@@ -52,7 +54,7 @@ namespace InterportCargoWPF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("InterportCargoWPF.Models.Employee", b =>
@@ -90,7 +92,7 @@ namespace InterportCargoWPF.Migrations
 
                     b.HasKey("EmployeeID");
 
-                    b.ToTable("Employees", (string)null);
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("InterportCargoWPF.Models.Notification", b =>
@@ -116,7 +118,7 @@ namespace InterportCargoWPF.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("InterportCargoWPF.Models.Quotation", b =>
@@ -170,7 +172,7 @@ namespace InterportCargoWPF.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Quotations", (string)null);
+                    b.ToTable("Quotations");
                 });
 
             modelBuilder.Entity("InterportCargoWPF.Models.RateSchedule", b =>
@@ -191,7 +193,7 @@ namespace InterportCargoWPF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RateSchedules", (string)null);
+                    b.ToTable("RateSchedules");
 
                     b.HasData(
                         new

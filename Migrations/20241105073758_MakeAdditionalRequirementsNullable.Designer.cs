@@ -3,6 +3,7 @@ using System;
 using InterportCargoWPF.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InterportCargoWPF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241105073758_MakeAdditionalRequirementsNullable")]
+    partial class MakeAdditionalRequirementsNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.33");
@@ -52,7 +54,7 @@ namespace InterportCargoWPF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("InterportCargoWPF.Models.Employee", b =>
@@ -90,7 +92,7 @@ namespace InterportCargoWPF.Migrations
 
                     b.HasKey("EmployeeID");
 
-                    b.ToTable("Employees", (string)null);
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("InterportCargoWPF.Models.Notification", b =>
@@ -116,7 +118,7 @@ namespace InterportCargoWPF.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("InterportCargoWPF.Models.Quotation", b =>
@@ -170,7 +172,7 @@ namespace InterportCargoWPF.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Quotations", (string)null);
+                    b.ToTable("Quotations");
                 });
 
             modelBuilder.Entity("InterportCargoWPF.Models.RateSchedule", b =>
@@ -179,84 +181,40 @@ namespace InterportCargoWPF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("FortyFeetContainer")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("TwentyFeetContainer")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Type")
+                    b.Property<string>("ContainerType")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("FacilityFee")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("FumigationFee")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("GstRate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("LclDeliveryDepot")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("LiftOnLiftOffFee")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("StorageFee")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("TailgateInspectionFee")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("WharfBookingFee")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("WharfInspectionFee")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("RateSchedules", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            FortyFeetContainer = 70m,
-                            TwentyFeetContainer = 60m,
-                            Type = "Wharf Booking Fee"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            FortyFeetContainer = 120m,
-                            TwentyFeetContainer = 80m,
-                            Type = "Lift On/Lift Off"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            FortyFeetContainer = 280m,
-                            TwentyFeetContainer = 220m,
-                            Type = "Fumigation"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            FortyFeetContainer = 500m,
-                            TwentyFeetContainer = 400m,
-                            Type = "LCL Delivery Depot"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            FortyFeetContainer = 160m,
-                            TwentyFeetContainer = 120m,
-                            Type = "Tailgate Inspection"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            FortyFeetContainer = 300m,
-                            TwentyFeetContainer = 240m,
-                            Type = "Storage Fee"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            FortyFeetContainer = 100m,
-                            TwentyFeetContainer = 70m,
-                            Type = "Facility Fee"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            FortyFeetContainer = 90m,
-                            TwentyFeetContainer = 60m,
-                            Type = "Wharf Inspection"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            FortyFeetContainer = 10m,
-                            TwentyFeetContainer = 10m,
-                            Type = "GST"
-                        });
+                    b.ToTable("RateSchedules");
                 });
 
             modelBuilder.Entity("InterportCargoWPF.Models.Notification", b =>

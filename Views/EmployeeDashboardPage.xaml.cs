@@ -17,6 +17,7 @@ namespace InterportCargoWPF.Views
         {
             InitializeComponent();
             LoadQuotations();
+            LoadNotifications();
         }
 
         private void LoadQuotations()
@@ -25,19 +26,29 @@ namespace InterportCargoWPF.Views
             {
                 using (var context = new AppDbContext())
                 {
+                    // Fetch quotations from the database and include related Customer data
                     var quotationsFromDb = context.Quotations
                         .Include(q => q.Customer)
                         .ToList();
 
+                    // Update any quotations with an empty or null Status to "Pending"
+                    bool statusUpdated = false;
                     foreach (var quotation in quotationsFromDb)
                     {
                         if (string.IsNullOrEmpty(quotation.Status))
                         {
                             quotation.Status = "Pending";
-                            context.SaveChanges();
+                            statusUpdated = true;
                         }
                     }
 
+                    // Save changes only if any status was updated
+                    if (statusUpdated)
+                    {
+                        context.SaveChanges();
+                    }
+
+                    // Set the quotations to the ObservableCollection for the DataGrid
                     Quotations = new ObservableCollection<Quotation>(quotationsFromDb);
                     QuotationsDataGrid.ItemsSource = Quotations;
                 }
@@ -48,10 +59,28 @@ namespace InterportCargoWPF.Views
             }
         }
 
+        
+        private void OpenButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is int quotationId)
+            {
+                var detailPage = new QuotationDetailPage(quotationId);
+
+                // Subscribe to the QuotationUpdated event to refresh the dashboard when returning
+                detailPage.QuotationUpdated += () => LoadQuotations();
+
+                NavigationService?.Navigate(detailPage);
+            }
+        }
+
+    
+
         private void ActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
             {
+                MessageBox.Show("ComboBox Selection Changed");
+
                 if (selectedItem.Tag is int quotationId)
                 {
                     string action = selectedItem.Content.ToString();
@@ -71,6 +100,7 @@ namespace InterportCargoWPF.Views
                 }
             }
         }
+
 
         private void AcceptQuotation(int quotationId)
         {
@@ -108,6 +138,7 @@ namespace InterportCargoWPF.Views
             if (quotation != null)
             {
                 quotation.Status = status;
+
                 try
                 {
                     using (var context = new AppDbContext())
@@ -117,10 +148,12 @@ namespace InterportCargoWPF.Views
                         {
                             quotationToUpdate.Status = status;
                             context.SaveChanges();
+
+                            // Add a notification for the customer about the status change
                             var notification = new Notification
                             {
                                 CustomerId = quotationToUpdate.CustomerId,
-                                Message = $"Your quotation with ID {quotationId} has been {status.ToLower()} by the Quotation Officer.",
+                                Message = $"Your quotation (ID: {quotationId}) status has been updated to: {status}.",
                                 DateCreated = DateTime.Now,
                                 IsRead = false
                             };
@@ -168,5 +201,46 @@ namespace InterportCargoWPF.Views
         {
             LoadQuotations();
         }
+        
+        private void LoadNotifications()
+        {
+            try
+            {
+                using (var context = new AppDbContext())
+                {
+                    var notifications = context.Notifications
+                        .Where(n => !n.IsRead) // Filter for unread notifications if needed
+                        .ToList();
+
+                    // Clear the ListBox before loading
+                    NotificationsListBox.Items.Clear();
+
+                    // Display notifications in the ListBox
+                    foreach (var notification in notifications)
+                    {
+                        NotificationsListBox.Items.Add(notification.Message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while loading notifications: {ex.Message}", "Error");
+            }
+        }
+
+        private void MarkNotificationAsRead(int notificationId)
+        {
+            using (var context = new AppDbContext())
+            {
+                var notification = context.Notifications.FirstOrDefault(n => n.Id == notificationId);
+                if (notification != null)
+                {
+                    notification.IsRead = true;
+                    context.SaveChanges();
+                }
+            }
+        }
+
+
     }
 }

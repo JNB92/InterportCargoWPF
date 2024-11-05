@@ -10,18 +10,12 @@
         <DataGrid x:Name="RateScheduleDataGrid" AutoGenerateColumns="False" Margin="0,60,0,0"
                   HorizontalAlignment="Stretch" VerticalAlignment="Top" 
                   CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True">
-            
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Container Type" Binding="{Binding ContainerType}" Width="*"/>
-                <DataGridTextColumn Header="Wharf Booking Fee" Binding="{Binding WharfBookingFee, StringFormat=C}" Width="*"/>
-                <DataGridTextColumn Header="Lift On/Lift Off Fee" Binding="{Binding LiftOnLiftOffFee, StringFormat=C}" Width="*"/>
-                <DataGridTextColumn Header="Fumigation Fee" Binding="{Binding FumigationFee, StringFormat=C}" Width="*"/>
-                <DataGridTextColumn Header="LCL Delivery Depot" Binding="{Binding LclDeliveryDepot, StringFormat=C}" Width="*"/>
-                <DataGridTextColumn Header="Tailgate Inspection Fee" Binding="{Binding TailgateInspectionFee, StringFormat=C}" Width="*"/>
-                <DataGridTextColumn Header="Storage Fee" Binding="{Binding StorageFee, StringFormat=C}" Width="*"/>
-                <DataGridTextColumn Header="Facility Fee" Binding="{Binding FacilityFee, StringFormat=C}" Width="*"/>
-                <DataGridTextColumn Header="Wharf Inspection Fee" Binding="{Binding WharfInspectionFee, StringFormat=C}" Width="*"/>
-                <DataGridTextColumn Header="GST" Binding="{Binding GstRate, StringFormat=P}" Width="*"/>
+                <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*"/>
+                <DataGridTextColumn Header="20 Feet Container" Binding="{Binding TwentyFeetContainer, StringFormat=C}" Width="*"/>
+                <DataGridTextColumn Header="40 Feet Container" Binding="{Binding FortyFeetContainer, StringFormat=C}" Width="*"/>
+                <DataGridTextColumn Header="Depot Charges" Binding="{Binding DepotCharges, StringFormat=C}" Width="*"/>
+                <DataGridTextColumn Header="LCL Delivery Charges" Binding="{Binding LclDeliveryCharges, StringFormat=C}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

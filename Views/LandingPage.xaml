@@ -12,7 +12,7 @@
 
         <!-- Sidebar with navigation buttons on the left -->
         <StackPanel Width="200" VerticalAlignment="Top" Margin="10" DockPanel.Dock="Left">
-            <Button Content="Go to Quotation Request" Width="180" Height="50" Margin="0,10" Click="GoToQuotation_Click"/>
+            <Button Content="Request Quotation" Width="180" Height="50" Margin="0,10" Click="GoToQuotation_Click"/>
             <Button Content="View My Quotations" Width="180" Height="50" Margin="0,10" Click="ViewMyQuotations_Click"/>
             <Button Content="Outturn" Click="OutturnButton_Click" Width="180" Height="50" Margin="0,10"/>
             <Button Content="Booking" Click="BookingButton_Click" Width="180" Height="50" Margin="0,10"/>

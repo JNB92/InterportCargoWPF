@@ -7,251 +7,247 @@ using InterportCargoWPF.Database;
 using InterportCargoWPF.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace InterportCargoWPF.Views
+namespace InterportCargoWPF.Views;
+
+public partial class EmployeeDashboardPage : Page
 {
-    public partial class EmployeeDashboardPage : Page
+    public ObservableCollection<Quotation> Quotations { get; set; }
+
+    public EmployeeDashboardPage()
     {
-        public ObservableCollection<Quotation> Quotations { get; set; }
+        InitializeComponent();
+        LoadQuotations();
+        LoadUnreadNotifications();
+    }
 
-        public EmployeeDashboardPage()
+    private void LoadQuotations()
+    {
+        try
         {
-            InitializeComponent();
-            LoadQuotations();
-            LoadNotifications();
-        }
-
-        private void LoadQuotations()
-        {
-            try
+            using (var context = new AppDbContext())
             {
-                using (var context = new AppDbContext())
-                {
-                    // Fetch quotations from the database and include related Customer data
-                    var quotationsFromDb = context.Quotations
-                        .Include(q => q.Customer)
-                        .ToList();
+                var quotationsFromDb = context.Quotations
+                    .Include(q => q.Customer)
+                    .ToList();
 
-                    // Update any quotations with an empty or null Status to "Pending"
-                    bool statusUpdated = false;
-                    foreach (var quotation in quotationsFromDb)
-                    {
-                        if (string.IsNullOrEmpty(quotation.Status))
-                        {
-                            quotation.Status = "Pending";
-                            statusUpdated = true;
-                        }
-                    }
+                // Update quotations with missing status and save changes if any
+                UpdateQuotationStatusIfNeeded(quotationsFromDb, context);
 
-                    // Save changes only if any status was updated
-                    if (statusUpdated)
-                    {
-                        context.SaveChanges();
-                    }
-
-                    // Set the quotations to the ObservableCollection for the DataGrid
-                    Quotations = new ObservableCollection<Quotation>(quotationsFromDb);
-                    QuotationsDataGrid.ItemsSource = Quotations;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred while loading quotations: {ex.Message}", "Error");
+                Quotations = new ObservableCollection<Quotation>(quotationsFromDb);
+                QuotationsDataGrid.ItemsSource = Quotations;
             }
         }
+        catch (Exception ex)
+        {
+            ShowErrorMessage("An error occurred while loading quotations.", ex);
+        }
+    }
 
-        private void LoadOfficerNotifications()
+    private void UpdateQuotationStatusIfNeeded(IList<Quotation> quotations, AppDbContext context)
+    {
+        var statusUpdated = false;
+        foreach (var quotation in quotations.Where(q => string.IsNullOrEmpty(q.Status)))
+        {
+            quotation.Status = "Pending";
+            statusUpdated = true;
+        }
+
+        if (statusUpdated) context.SaveChanges();
+    }
+
+    private void LoadUnreadNotifications()
+    {
+        try
         {
             using (var context = new AppDbContext())
             {
                 var notifications = context.Notifications
-                    .Where(n => !n.IsRead) // Only load unread notifications
+                    .Where(n => !n.IsRead)
                     .OrderByDescending(n => n.DateCreated)
                     .ToList();
 
                 NotificationsListBox.Items.Clear();
-
                 foreach (var notification in notifications)
                 {
                     NotificationsListBox.Items.Add(notification.Message);
-                    notification.IsRead = true;
+                    MarkNotificationAsRead(notification.Id);
                 }
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowErrorMessage("An error occurred while loading notifications.", ex);
+        }
+    }
 
+    private void MarkNotificationAsRead(int notificationId)
+    {
+        using (var context = new AppDbContext())
+        {
+            var notification = context.Notifications.FirstOrDefault(n => n.Id == notificationId);
+            if (notification != null)
+            {
+                notification.IsRead = true;
                 context.SaveChanges();
             }
         }
+    }
 
-        private void OpenButton_Click(object sender, RoutedEventArgs e)
+    private void OpenButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.Tag is int quotationId)
         {
-            if (sender is Button button && button.Tag is int quotationId)
-            {
-                var detailPage = new QuotationDetailPage(quotationId);
-
-                // Subscribe to the QuotationUpdated event to refresh the dashboard when returning
-                detailPage.QuotationUpdated += LoadQuotations;
-
-                NavigationService?.Navigate(detailPage);
-            }
+            var detailPage = new QuotationDetailPage(quotationId);
+            detailPage.QuotationUpdated += LoadQuotations;
+            NavigationService?.Navigate(detailPage);
         }
+    }
 
-        private void ActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void ActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
+            if (selectedItem.Tag is int quotationId)
+                HandleQuotationAction(selectedItem.Content.ToString(), quotationId);
+    }
+
+    private void HandleQuotationAction(string action, int quotationId)
+    {
+        switch (action)
         {
-            if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
-            {
-                if (selectedItem.Tag is int quotationId)
-                {
-                    string action = selectedItem.Content.ToString();
-
-                    switch (action)
-                    {
-                        case "Accept":
-                            AcceptQuotation(quotationId);
-                            break;
-                        case "Reject":
-                            RejectQuotation(quotationId);
-                            break;
-                        case "Pending":
-                            SetQuotationPending(quotationId);
-                            break;
-                    }
-                }
-            }
+            case "Accept":
+                AcceptQuotation(quotationId);
+                break;
+            case "Reject":
+                RejectQuotation(quotationId);
+                break;
+            case "Pending":
+                SetQuotationPending(quotationId);
+                break;
         }
+    }
 
-        private void AcceptQuotation(int quotationId)
+    private void AcceptQuotation(int quotationId)
+    {
+        var quotation = Quotations.FirstOrDefault(q => q.Id == quotationId);
+        if (quotation != null)
         {
-            var quotation = Quotations.FirstOrDefault(q => q.Id == quotationId);
-            if (quotation != null)
-            {
-                decimal discount = DetermineDiscount(quotation);
-                quotation.Discount = discount;
-                quotation.FinalAmount = quotation.TotalAmount * (1 - discount);
-                UpdateQuotationStatus(quotationId, "Accepted");
-            }
+            var discount = DetermineDiscount(quotation);
+            quotation.Discount = discount;
+            quotation.FinalAmount = quotation.TotalAmount * (1 - discount);
+            UpdateQuotationStatus(quotationId, "Accepted");
         }
+    }
 
-        private void SetQuotationPending(int quotationId)
+    private void SetQuotationPending(int quotationId)
+    {
+        UpdateQuotationStatus(quotationId, "Pending");
+    }
+
+    private decimal DetermineDiscount(Quotation quotation)
+    {
+        return quotation.NatureOfJob.Contains("special") ? 0.1m : 0;
+    }
+
+    private void RejectQuotation(int quotationId)
+    {
+        var rejectionMessage = Microsoft.VisualBasic.Interaction.InputBox(
+            "Enter the reason for rejecting this quotation:", "Rejection Reason", "Incomplete information");
+        UpdateQuotationStatus(quotationId, "Rejected");
+        NotifyCustomer(quotationId, $"Your quotation (ID: {quotationId}) was rejected. Reason: {rejectionMessage}");
+    }
+
+    private void UpdateQuotationStatus(int quotationId, string status)
+    {
+        var quotation = Quotations.FirstOrDefault(q => q.Id == quotationId);
+        if (quotation != null)
         {
-            UpdateQuotationStatus(quotationId, "Pending");
-        }
+            quotation.Status = status;
 
-        private decimal DetermineDiscount(Quotation quotation)
-        {
-            return quotation.NatureOfJob.Contains("special") ? 0.1m : 0;
-        }
-
-        private void RejectQuotation(int quotationId)
-        {
-            string rejectionMessage = Microsoft.VisualBasic.Interaction.InputBox(
-                "Enter the reason for rejecting this quotation:", "Rejection Reason", "Incomplete information");
-            UpdateQuotationStatus(quotationId, "Rejected");
-            NotifyCustomerOfRejection(quotationId, rejectionMessage);
-        }
-
-        private void UpdateQuotationStatus(int quotationId, string status)
-        {
-            var quotation = Quotations.FirstOrDefault(q => q.Id == quotationId);
-            if (quotation != null)
-            {
-                quotation.Status = status;
-
-                try
-                {
-                    using (var context = new AppDbContext())
-                    {
-                        var quotationToUpdate = context.Quotations.Find(quotationId);
-                        if (quotationToUpdate != null)
-                        {
-                            quotationToUpdate.Status = status;
-                            context.SaveChanges();
-
-                            // Add a notification for the customer about the status change
-                            var notification = new Notification
-                            {
-                                CustomerId = quotationToUpdate.CustomerId,
-                                Message = $"Your quotation (ID: {quotationId}) status has been updated to: {status}.",
-                                DateCreated = DateTime.Now,
-                                IsRead = false
-                            };
-                            context.Notifications.Add(notification);
-                            context.SaveChanges();
-                        }
-                    }
-                    RefreshQuotationGrid();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"An error occurred while updating the quotation: {ex.Message}", "Error");
-                }
-            }
-        }
-
-        private void NotifyCustomerOfRejection(int quotationId, string message)
-        {
             try
             {
                 using (var context = new AppDbContext())
                 {
-                    var quotation = context.Quotations.Include(q => q.Customer).FirstOrDefault(q => q.Id == quotationId);
-                    if (quotation != null)
+                    var quotationToUpdate = context.Quotations.Find(quotationId);
+                    if (quotationToUpdate != null)
                     {
-                        var notification = new Notification
-                        {
-                            CustomerId = quotation.CustomerId,
-                            Message = $"Your quotation (ID: {quotationId}) was rejected. Reason: {message}",
-                            DateCreated = DateTime.Now,
-                            IsRead = false
-                        };
-                        context.Notifications.Add(notification);
+                        quotationToUpdate.Status = status;
                         context.SaveChanges();
+
+                        NotifyCustomer(quotationId,
+                            $"Your quotation (ID: {quotationId}) status has been updated to: {status}.");
                     }
                 }
+
+                RefreshQuotationGrid();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred while notifying the customer: {ex.Message}", "Error");
+                ShowErrorMessage("An error occurred while updating the quotation.", ex);
             }
         }
+    }
 
-        private void RefreshQuotationGrid()
-        {
-            LoadQuotations();
-        }
-
-        private void LoadNotifications()
-        {
-            try
-            {
-                using (var context = new AppDbContext())
-                {
-                    var notifications = context.Notifications
-                        .Where(n => !n.IsRead) // Filter for unread notifications if needed
-                        .ToList();
-
-                    NotificationsListBox.Items.Clear();
-
-                    foreach (var notification in notifications)
-                    {
-                        NotificationsListBox.Items.Add(notification.Message);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred while loading notifications: {ex.Message}", "Error");
-            }
-        }
-
-        private void MarkNotificationAsRead(int notificationId)
+    private void NotifyCustomer(int quotationId, string message)
+    {
+        try
         {
             using (var context = new AppDbContext())
             {
-                var notification = context.Notifications.FirstOrDefault(n => n.Id == notificationId);
-                if (notification != null)
+                var quotation = context.Quotations.Include(q => q.Customer).FirstOrDefault(q => q.Id == quotationId);
+                if (quotation != null)
                 {
-                    notification.IsRead = true;
+                    var notification = new Notification
+                    {
+                        CustomerId = quotation.CustomerId,
+                        Message = message,
+                        DateCreated = DateTime.Now,
+                        IsRead = false
+                    };
+                    context.Notifications.Add(notification);
                     context.SaveChanges();
                 }
             }
         }
+        catch (Exception ex)
+        {
+            ShowErrorMessage("An error occurred while notifying the customer.", ex);
+        }
+    }
+
+    private void RefreshQuotationGrid()
+    {
+        LoadQuotations();
+    }
+
+    private void ShowErrorMessage(string message, Exception ex)
+    {
+        MessageBox.Show($"{message} Details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+    }
+
+    private void ViewQuotations_Click(object sender, RoutedEventArgs e)
+    {
+        // Add code to navigate or display quotations as needed
+        MessageBox.Show("View Quotations button clicked.");
+    }
+
+    // Event handler for View Notifications button
+    private void ViewNotifications_Click(object sender, RoutedEventArgs e)
+    {
+        // Add code to load or display notifications as needed
+        MessageBox.Show("View Notifications button clicked.");
+    }
+
+    // Event handler for Outturn button
+    private void OutturnButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Add code to handle outturn functionality as needed
+        MessageBox.Show("Outturn button clicked.");
+    }
+
+    // Event handler for Booking button
+    private void BookingButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Add code to handle booking functionality as needed
+        MessageBox.Show("Booking button clicked.");
     }
 }

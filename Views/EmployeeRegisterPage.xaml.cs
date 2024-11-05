@@ -4,74 +4,73 @@ using InterportCargoWPF.Database;
 using InterportCargoWPF.Models;
 using BCrypt.Net;
 
-namespace InterportCargoWPF.Views
+namespace InterportCargoWPF.Views;
+
+public partial class EmployeeRegisterPage : Page
 {
-    public partial class EmployeeRegisterPage : Page
+    public EmployeeRegisterPage()
     {
-        public EmployeeRegisterPage()
+        InitializeComponent();
+    }
+
+    private void RegisterButton_Click(object sender, RoutedEventArgs e)
+    {
+        var employeeType = EmployeeTypeBox.Text; // Capture EmployeeType from ComboBox
+        var firstName = FirstNameBox.Text;
+        var lastName = LastNameBox.Text;
+        var phoneNumber = PhoneNumberBox.Text;
+        var email = EmailBox.Text;
+        var password = PasswordBox.Password;
+        var address = AddressBox.Text;
+
+        // Check that all required fields are filled
+        if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName) ||
+            string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(phoneNumber) ||
+            string.IsNullOrWhiteSpace(address) || string.IsNullOrWhiteSpace(employeeType) ||
+            string.IsNullOrWhiteSpace(password))
         {
-            InitializeComponent();
+            MessageBox.Show("All fields are required.");
+            return;
         }
 
-        private void RegisterButton_Click(object sender, RoutedEventArgs e)
+        // Hash the password
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+
+        // Create an Employee object with all required fields
+        var newEmployee = new Employee
         {
-            string employeeType = EmployeeTypeBox.Text;  // Capture EmployeeType from ComboBox
-            string firstName = FirstNameBox.Text;
-            string lastName = LastNameBox.Text;
-            string phoneNumber = PhoneNumberBox.Text;
-            string email = EmailBox.Text;
-            string password = PasswordBox.Password;
-            string address = AddressBox.Text;
+            EmployeeType = employeeType, // Assign EmployeeType
+            FirstName = firstName,
+            LastName = lastName,
+            PhoneNumber = phoneNumber, // Assign PhoneNumber
+            Email = email,
+            Address = address,
+            PasswordHash = hashedPassword
+        };
 
-            // Check that all required fields are filled
-            if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName) ||
-                string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(phoneNumber) || 
-                string.IsNullOrWhiteSpace(address) ||string.IsNullOrWhiteSpace(employeeType) ||
-                string.IsNullOrWhiteSpace(password))
+        // Save the new employee to the database
+        using (var context = new AppDbContext())
+        {
+            var existingEmployee = context.Employees.SingleOrDefault(emp => emp.Email == email);
+            if (existingEmployee == null)
             {
-                MessageBox.Show("All fields are required.");
-                return;
+                context.Employees.Add(newEmployee);
+                context.SaveChanges();
+
+                MessageBox.Show("Employee registration successful!");
+
+                // Redirect to login or another page as needed
+                MainWindow.Instance.MainFrame.Navigate(new EmployeeLoginPage());
             }
-
-            // Hash the password
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
-
-            // Create an Employee object with all required fields
-            var newEmployee = new Employee
+            else
             {
-                EmployeeType = employeeType,  // Assign EmployeeType
-                FirstName = firstName,
-                LastName = lastName,
-                PhoneNumber = phoneNumber,    // Assign PhoneNumber
-                Email = email,
-                Address = address,
-                PasswordHash = hashedPassword
-            };
-
-            // Save the new employee to the database
-            using (var context = new AppDbContext())
-            {
-                var existingEmployee = context.Employees.SingleOrDefault(emp => emp.Email == email);
-                if (existingEmployee == null)
-                {
-                    context.Employees.Add(newEmployee);
-                    context.SaveChanges();
-
-                    MessageBox.Show("Employee registration successful!");
-
-                    // Redirect to login or another page as needed
-                    MainWindow.Instance.MainFrame.Navigate(new EmployeeLoginPage());
-                }
-                else
-                {
-                    MessageBox.Show("An employee with this email already exists.");
-                }
+                MessageBox.Show("An employee with this email already exists.");
             }
         }
+    }
 
-        private void ReturnToLogin_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService?.Navigate(new EmployeeLoginPage());
-        }
+    private void ReturnToLogin_Click(object sender, RoutedEventArgs e)
+    {
+        NavigationService?.Navigate(new EmployeeLoginPage());
     }
 }

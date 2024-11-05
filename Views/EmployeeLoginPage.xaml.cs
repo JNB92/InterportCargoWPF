@@ -4,65 +4,64 @@ using System.Windows.Controls;
 using InterportCargoWPF.Database;
 using BCrypt.Net;
 
-namespace InterportCargoWPF.Views
+namespace InterportCargoWPF.Views;
+
+public partial class EmployeeLoginPage : Page
 {
-    public partial class EmployeeLoginPage : Page
+    public EmployeeLoginPage()
     {
-        public EmployeeLoginPage()
+        InitializeComponent();
+    }
+
+    private void LoginButton_Click(object sender, RoutedEventArgs e)
+    {
+        var email = EmailBox.Text;
+        var password = PasswordBox.Password;
+
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
         {
-            InitializeComponent();
+            MessageBox.Show("Please enter both email and password.");
+            return;
         }
 
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        try
         {
-            string email = EmailBox.Text;
-            string password = PasswordBox.Password;
-
-            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+            using (var context = new AppDbContext())
             {
-                MessageBox.Show("Please enter both email and password.");
-                return;
-            }
+                var employee = context.Employees.SingleOrDefault(emp => emp.Email == email);
 
-            try
-            {
-                using (var context = new AppDbContext())
+                if (employee != null && BCrypt.Net.BCrypt.Verify(password, employee.PasswordHash))
                 {
-                    var employee = context.Employees.SingleOrDefault(emp => emp.Email == email);
-
-                    if (employee != null && BCrypt.Net.BCrypt.Verify(password, employee.PasswordHash))
-                    {
-                        MainWindow.Instance.ShowLoginSuccessMessage();
-                        // MessageBox.Show("Login successful!");
-                        MainWindow.Instance.MainFrame.Navigate(new EmployeeDashboardPage());
-                        MainWindow.Instance.EmployeeLoginButton.Visibility = Visibility.Collapsed;
-                        MainWindow.Instance.BackButton.Visibility = Visibility.Visible;
-                        MainWindow.Instance.LogoutButton.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Invalid email or password.");
-                    }
+                    MainWindow.Instance.ShowLoginSuccessMessage();
+                    // MessageBox.Show("Login successful!");
+                    MainWindow.Instance.MainFrame.Navigate(new EmployeeDashboardPage());
+                    MainWindow.Instance.EmployeeLoginButton.Visibility = Visibility.Collapsed;
+                    MainWindow.Instance.BackButton.Visibility = Visibility.Visible;
+                    MainWindow.Instance.LogoutButton.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    MessageBox.Show("Invalid email or password.");
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred during login: {ex.Message}", "Error");
-            }
         }
-
-        private void OpenEmployeeRegisterPage_Click(object sender, RoutedEventArgs e)
+        catch (Exception ex)
         {
-            MainWindow.Instance.MainFrame.Navigate(new EmployeeRegisterPage());
+            MessageBox.Show($"An error occurred during login: {ex.Message}", "Error");
         }
+    }
 
-        private void OpenCustomerLoginPage_Click(object sender, RoutedEventArgs e)
-        {
-            MainWindow.Instance.MainFrame.Visibility = Visibility.Collapsed;
-            MainWindow.Instance.LoginForm.Visibility = Visibility.Visible;
-            MainWindow.Instance.EmployeeLoginButton.Visibility = Visibility.Visible;
-            MainWindow.Instance.BackButton.Visibility = Visibility.Collapsed;
-            MainWindow.Instance.LogoutButton.Visibility = Visibility.Collapsed;
-        }
+    private void OpenEmployeeRegisterPage_Click(object sender, RoutedEventArgs e)
+    {
+        MainWindow.Instance.MainFrame.Navigate(new EmployeeRegisterPage());
+    }
+
+    private void OpenCustomerLoginPage_Click(object sender, RoutedEventArgs e)
+    {
+        MainWindow.Instance.MainFrame.Visibility = Visibility.Collapsed;
+        MainWindow.Instance.LoginForm.Visibility = Visibility.Visible;
+        MainWindow.Instance.EmployeeLoginButton.Visibility = Visibility.Visible;
+        MainWindow.Instance.BackButton.Visibility = Visibility.Collapsed;
+        MainWindow.Instance.LogoutButton.Visibility = Visibility.Collapsed;
     }
 }

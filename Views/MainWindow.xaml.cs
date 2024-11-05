@@ -5,159 +5,155 @@ using System.Windows.Threading;
 using InterportCargoWPF.Database;
 using InterportCargoWPF.Views;
 
-namespace InterportCargoWPF.Views
+namespace InterportCargoWPF.Views;
+
+public partial class MainWindow : Window
 {
-    public partial class MainWindow : Window
+    public static MainWindow Instance { get; private set; }
+
+    public MainWindow()
     {
-        public static MainWindow Instance { get; private set; }
+        InitializeComponent();
 
-        public MainWindow()
+        Instance = this;
+    }
+
+    private void OpenEmployeeLoginPage_Click(object sender, RoutedEventArgs e)
+    {
+        // Show the Employee Login page within the Frame
+        MainFrame.Visibility = Visibility.Visible;
+        LoginForm.Visibility = Visibility.Collapsed;
+        MainFrame.Navigate(new EmployeeLoginPage());
+
+        // Do not alter the button visibility here; only handle it after successful login.
+    }
+
+    public void ShowLoginSuccessMessage()
+    {
+        LoginSuccessTextBlock.Visibility = Visibility.Visible;
+
+        // Set up a DispatcherTimer to hide the message after 5 seconds
+        var timer = new DispatcherTimer
         {
-            InitializeComponent();
-            Instance = this;
-        }
-
-        private void OpenEmployeeLoginPage_Click(object sender, RoutedEventArgs e)
+            Interval = TimeSpan.FromSeconds(2)
+        };
+        timer.Tick += (s, args) =>
         {
-            // Show the Employee Login page within the Frame
-            MainFrame.Visibility = Visibility.Visible;
-            LoginForm.Visibility = Visibility.Collapsed;
-            MainFrame.Navigate(new EmployeeLoginPage());
+            LoginSuccessTextBlock.Visibility = Visibility.Collapsed;
+            timer.Stop();
+        };
+        timer.Start();
+    }
 
-            // Do not alter the button visibility here; only handle it after successful login.
-        }
-        public void ShowLoginSuccessMessage()
+
+    private void OpenRegisterWindow_Click(object sender, RoutedEventArgs e)
+    {
+        MainFrame.Visibility = Visibility.Visible;
+        LoginForm.Visibility = Visibility.Collapsed;
+        MainFrame.Navigate(new RegisterPage());
+    }
+
+    public void LoginButton_Click(object sender, RoutedEventArgs e)
+    {
+        var email = EmailBox.Text;
+        var enteredPassword = PasswordBox.Password;
+
+        using (var context = new AppDbContext())
         {
-            LoginSuccessTextBlock.Visibility = Visibility.Visible;
+            // First, check if the customer exists in the database
+            var customer = context.Customers.FirstOrDefault(c => c.Email == email);
 
-            // Set up a DispatcherTimer to hide the message after 5 seconds
-            DispatcherTimer timer = new DispatcherTimer
+            if (customer != null)
             {
-                Interval = TimeSpan.FromSeconds(5)
-            };
-            timer.Tick += (s, args) =>
-            {
-                LoginSuccessTextBlock.Visibility = Visibility.Collapsed;
-                timer.Stop();
-            };
-            timer.Start();
-        }
+                // Verify the entered password against the stored hashed password
+                var isPasswordCorrect = BCrypt.Net.BCrypt.Verify(enteredPassword, customer.Password);
 
-
-        private void OpenRegisterWindow_Click(object sender, RoutedEventArgs e)
-        {
-            MainFrame.Visibility = Visibility.Visible;
-            LoginForm.Visibility = Visibility.Collapsed;
-            MainFrame.Navigate(new RegisterPage());
-        }
-
-        public void LoginButton_Click(object sender, RoutedEventArgs e)
-        {
-            string email = EmailBox.Text;
-            string enteredPassword = PasswordBox.Password;
-
-            using (var context = new AppDbContext())
-            {
-                // First, check if the customer exists in the database
-                var customer = context.Customers.FirstOrDefault(c => c.Email == email);
-
-                if (customer != null)
+                if (isPasswordCorrect)
                 {
-                    // Verify the entered password against the stored hashed password
-                    bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(enteredPassword, customer.Password);
+                    //MessageBox.Show($"Login successful! Welcome, {customer.FirstName} {customer.LastName}.");
 
-                    if (isPasswordCorrect)
-                    {
-                        //MessageBox.Show($"Login successful! Welcome, {customer.FirstName} {customer.LastName}.");
-                
-                        // Set the LoggedInCustomerId in SessionManager
-                        SessionManager.LoggedInCustomerId = customer.Id;
+                    // Set the LoggedInCustomerId in SessionManager
+                    SessionManager.LoggedInCustomerId = customer.Id;
 
-                        // Navigate to the landing page on successful login
-                        LoginSuccessful();
+                    // Navigate to the landing page on successful login
+                    LoginSuccessful();
 
-                        // Show the universal "Login Successful" message
-                        ShowLoginSuccessMessage();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Invalid password.");
-                    }
+                    // Show the universal "Login Successful" message
+                    ShowLoginSuccessMessage();
                 }
                 else
                 {
-                    MessageBox.Show("Invalid email or password.");
+                    MessageBox.Show("Invalid password.");
                 }
-            }
-        }
-
-        public void ShowCantGoBackMessage()
-        {
-            CantgobackTextBlock.Visibility = Visibility.Visible;
-
-            // Set up a DispatcherTimer to hide the message after 5 seconds
-            DispatcherTimer timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(5)
-            };
-            timer.Tick += (s, args) =>
-            {
-                CantgobackTextBlock.Visibility = Visibility.Collapsed;
-                timer.Stop();
-            };
-            timer.Start();
-        }
-
-
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (MainFrame.CanGoBack && MainFrame.Content != this && MainFrame.Content is not EmployeeDashboardPage)
-            {
-                MainFrame.GoBack();
             }
             else
             {
-                // Show the "can't go back" message on any page
-                ShowCantGoBackMessage();
+                MessageBox.Show("Invalid email or password.");
             }
         }
+    }
 
+    public void ShowCantGoBackMessage()
+    {
+        CantgobackTextBlock.Visibility = Visibility.Visible;
 
-        
-
-        public void LoginSuccessful()
+        // Set up a DispatcherTimer to hide the message after 5 seconds
+        var timer = new DispatcherTimer
         {
-            LoginForm.Visibility = Visibility.Collapsed;
-            MainFrame.Visibility = Visibility.Visible;
-            MainFrame.Navigate(new LandingPage());
-
-            // Show Back and Logout buttons, hide Employee Login button after successful login
-            EmployeeLoginButton.Visibility = Visibility.Collapsed;
-            BackButton.Visibility = Visibility.Visible;
-            LogoutButton.Visibility = Visibility.Visible;
-        }
-
-        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+            Interval = TimeSpan.FromSeconds(5)
+        };
+        timer.Tick += (s, args) =>
         {
-            EmailBox.Text = string.Empty;
-            PasswordBox.Password = string.Empty;
-            
-            // Display the logout message
-            LogoutMessageTextBlock.Text = "You have been logged out.";
-            LogoutMessageTextBlock.Visibility = Visibility.Visible;
+            CantgobackTextBlock.Visibility = Visibility.Collapsed;
+            timer.Stop();
+        };
+        timer.Start();
+    }
 
-            // Reset to the login form and update button visibility
-            LoginForm.Visibility = Visibility.Visible;
-            MainFrame.Visibility = Visibility.Collapsed;
 
-            EmployeeLoginButton.Visibility = Visibility.Visible;
-            BackButton.Visibility = Visibility.Collapsed;
-            LogoutButton.Visibility = Visibility.Collapsed;
-        }
-        private void ClearLogoutMessage(object sender, RoutedEventArgs e)
-        {
-            // Hide the logout message when the user starts entering credentials
-            LogoutMessageTextBlock.Visibility = Visibility.Collapsed;
-        }
+    private void BackButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (MainFrame.CanGoBack && MainFrame.Content != this && MainFrame.Content is not EmployeeDashboardPage)
+            MainFrame.GoBack();
+        else
+            // Show the "can't go back" message on any page
+            ShowCantGoBackMessage();
+    }
+
+
+    public void LoginSuccessful()
+    {
+        LoginForm.Visibility = Visibility.Collapsed;
+        MainFrame.Visibility = Visibility.Visible;
+        MainFrame.Navigate(new LandingPage());
+
+        // Show Back and Logout buttons, hide Employee Login button after successful login
+        EmployeeLoginButton.Visibility = Visibility.Collapsed;
+        BackButton.Visibility = Visibility.Visible;
+        LogoutButton.Visibility = Visibility.Visible;
+    }
+
+    private void LogoutButton_Click(object sender, RoutedEventArgs e)
+    {
+        EmailBox.Text = string.Empty;
+        PasswordBox.Password = string.Empty;
+
+        // Display the logout message
+        LogoutMessageTextBlock.Text = "You have been logged out.";
+        LogoutMessageTextBlock.Visibility = Visibility.Visible;
+
+        // Reset to the login form and update button visibility
+        LoginForm.Visibility = Visibility.Visible;
+        MainFrame.Visibility = Visibility.Collapsed;
+
+        EmployeeLoginButton.Visibility = Visibility.Visible;
+        BackButton.Visibility = Visibility.Collapsed;
+        LogoutButton.Visibility = Visibility.Collapsed;
+    }
+
+    private void ClearLogoutMessage(object sender, RoutedEventArgs e)
+    {
+        // Hide the logout message when the user starts entering credentials
+        LogoutMessageTextBlock.Visibility = Visibility.Collapsed;
     }
 }

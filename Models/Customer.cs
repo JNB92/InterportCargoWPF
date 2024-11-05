@@ -14,12 +14,14 @@ public class Customer
     // Navigation property for related Quotations
     public ICollection<Quotation> Quotations { get; set; }
     public string FullName => $"{FirstName} {LastName}";
+
     public Customer()
     {
         Quotations = new List<Quotation>();
     }
 
-    public Customer(string firstName, string lastName, string email, string phoneNumber, string address, string? company, string password) : this()
+    public Customer(string firstName, string lastName, string email, string phoneNumber, string address,
+        string? company, string password) : this()
     {
         FirstName = firstName;
         LastName = lastName;

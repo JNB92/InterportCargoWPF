@@ -1,8 +1,6 @@
-﻿namespace InterportCargoWPF
+﻿namespace InterportCargoWPF;
+
+public static class SessionManager
 {
-    public static class SessionManager
-    {
-        public static int LoggedInCustomerId { get; set; }
-    }
-    
+    public static int LoggedInCustomerId { get; set; }
 }

@@ -1,46 +1,44 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace InterportCargoWPF.Views
+namespace InterportCargoWPF.Views;
+
+public partial class LandingPage : Page
 {
-    public partial class LandingPage : Page
+    public LandingPage()
     {
-        public LandingPage()
+        InitializeComponent();
+    }
+
+    private void ViewMyQuotations_Click(object sender, RoutedEventArgs e)
+    {
+        var loggedInCustomerId = SessionManager.LoggedInCustomerId;
+
+        if (loggedInCustomerId <= 0)
         {
-            InitializeComponent();
+            MessageBox.Show("Customer ID is not valid. Please log in again.");
+            return;
         }
 
-        private void ViewMyQuotations_Click(object sender, RoutedEventArgs e)
-        {
-            int loggedInCustomerId = SessionManager.LoggedInCustomerId;
+        // Navigate to CustomerQuotationsPage within the ContentFrame
+        ContentFrame.Navigate(new CustomerQuotationsPage(loggedInCustomerId));
+    }
 
-            if (loggedInCustomerId <= 0)
-            {
-                MessageBox.Show("Customer ID is not valid. Please log in again.");
-                return;
-            }
+    private void GoToQuotation_Click(object sender, RoutedEventArgs e)
+    {
+        var loggedInCustomerId = SessionManager.LoggedInCustomerId;
 
-            // Navigate to CustomerQuotationsPage within the ContentFrame
-            ContentFrame.Navigate(new CustomerQuotationsPage(loggedInCustomerId));
-        }
+        // Navigate to QuotationPage within the ContentFrame
+        ContentFrame.Navigate(new QuotationPage(loggedInCustomerId));
+    }
 
-        private void GoToQuotation_Click(object sender, RoutedEventArgs e)
-        {
-            int loggedInCustomerId = SessionManager.LoggedInCustomerId;
+    private void OutturnButton_Click(object sender, RoutedEventArgs e)
+    {
+        NavigationService.Navigate(new OutturnPage());
+    }
 
-            // Navigate to QuotationPage within the ContentFrame
-            ContentFrame.Navigate(new QuotationPage(loggedInCustomerId));
-        }
-        
-        private void OutturnButton_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService.Navigate(new OutturnPage());
-        }
-
-        private void BookingButton_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService.Navigate(new BookingPage());
-        }
-
+    private void BookingButton_Click(object sender, RoutedEventArgs e)
+    {
+        NavigationService.Navigate(new BookingPage());
     }
 }

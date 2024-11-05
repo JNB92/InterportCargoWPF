@@ -1,50 +1,78 @@
 ﻿<Page x:Class="InterportCargoWPF.Views.EmployeeRegisterPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Title="Employee Registration" >
-    
+      Title="Employee Registration">
 
-        
-    <Border HorizontalAlignment="Center" VerticalAlignment="Center" 
-            Padding="70" Width="500" Height="800">
-        <StackPanel Margin="10">
-        
-            <TextBlock Text="Employee Registration" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" 
-                       Margin="0, 0, 0, 10"/>
-        
-        <Label Content="Employee Type" />
-        <ComboBox x:Name="EmployeeTypeBox">
-            <ComboBoxItem Content="Admin"/>
-            <ComboBoxItem Content="Quotation Officer"/>
-            <ComboBoxItem Content="Booking Officer"/>
-            <ComboBoxItem Content="Warehouse Officer"/>
-            <ComboBoxItem Content="Manager"/>
-            <ComboBoxItem Content="CIO"/>
-        </ComboBox>
-        
-        <!-- <Label Content="Employee ID"/> -->
-        <!-- <TextBox x:Name="EmployeeIDBox" /> -->
-        
-        <Label Content="First Name" />
-        <TextBox x:Name="FirstNameBox"/>
+    <Grid>
+        <!-- Main Grid Structure -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />  <!-- Header Row -->
+            <RowDefinition Height="*" />     <!-- Content Row -->
+            <RowDefinition Height="Auto" />  <!-- Footer Row -->
+        </Grid.RowDefinitions>
 
-        <Label Content="Last Name" />
-        <TextBox x:Name="LastNameBox" />
+        <!-- Header -->
+        <Grid Grid.Row="0" Height="50" Background="#E0E0E0">
+            <TextBlock Text="INTERPORT CARGO" VerticalAlignment="Center"
+                       HorizontalAlignment="Left" FontSize="18" FontWeight="Bold"
+                       Margin="10,0,0,0" />
+        </Grid>
 
-        <Label Content="Email" />
-        <TextBox x:Name="EmailBox" />
+        <!-- Registration Form (Centered) -->
+        <Border Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Padding="30" Width="500" BorderBrush="Gray" BorderThickness="1">
 
-        <Label Content="Phone Number" />
-        <TextBox x:Name="PhoneNumberBox"/>
-        
-        <Label Content="Address" />
-        <TextBox x:Name="AddressBox"/>
+            <StackPanel Margin="10">
+                <!-- Title -->
+                <TextBlock Text="Employee Registration" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"
+                           Margin="0, 0, 0, 20" />
 
-        <Label Content="Password" />
-        <PasswordBox x:Name="PasswordBox" />
+                <!-- Employee Type -->
+                <Label Content="Employee Type" />
+                <ComboBox x:Name="EmployeeTypeBox">
+                    <ComboBoxItem Content="Admin" />
+                    <ComboBoxItem Content="Quotation Officer" />
+                    <ComboBoxItem Content="Booking Officer" />
+                    <ComboBoxItem Content="Warehouse Officer" />
+                    <ComboBoxItem Content="Manager" />
+                    <ComboBoxItem Content="CIO" />
+                </ComboBox>
 
-        <Button Content="Register" Click="RegisterButton_Click" Background="Black" Foreground="White" Width="250" Height="40" />
-        <Button Content="Return to Login" Click="ReturnToLogin_Click" />
-        </StackPanel></Border>
-    
+                <!-- First Name -->
+                <Label Content="First Name" />
+                <TextBox x:Name="FirstNameBox" />
+
+                <!-- Last Name -->
+                <Label Content="Last Name" />
+                <TextBox x:Name="LastNameBox" />
+
+                <!-- Email -->
+                <Label Content="Email" />
+                <TextBox x:Name="EmailBox" />
+
+                <!-- Phone Number -->
+                <Label Content="Phone Number" />
+                <TextBox x:Name="PhoneNumberBox" />
+
+                <!-- Address -->
+                <Label Content="Address" />
+                <TextBox x:Name="AddressBox" />
+
+                <!-- Password -->
+                <Label Content="Password" />
+                <PasswordBox x:Name="PasswordBox" />
+
+                <!-- Buttons -->
+                <Button Content="Register" Click="RegisterButton_Click" Background="Black" Foreground="White"
+                        Width="250" Height="40" Margin="0,10,0,0" />
+                <Button Content="Return to Login" Click="ReturnToLogin_Click" Margin="0,10,0,0" />
+            </StackPanel>
+        </Border>
+
+        <!-- Footer -->
+        <Grid Grid.Row="2" Height="50" Background="#E0E0E0">
+            <TextBlock Text="InterportCargo© 2024" VerticalAlignment="Center"
+                       HorizontalAlignment="Center" FontSize="10" />
+        </Grid>
+    </Grid>
 </Page>

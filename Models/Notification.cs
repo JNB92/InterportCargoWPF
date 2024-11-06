@@ -15,12 +15,12 @@ public class Notification
     /// <summary>
     ///     Gets or sets the ID of the customer associated with the notification.
     /// </summary>
-    public int CustomerId { get; set; }
+    public int? CustomerId { get; set; }
 
     /// <summary>
     ///     Gets or sets the message content of the notification.
     /// </summary>
-    public string Message { get; set; }
+    public string? Message { get; set; }
 
     /// <summary>
     ///     Gets or sets the date and time when the notification was created.

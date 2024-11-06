@@ -18,7 +18,8 @@ namespace InterportCargoWPF.Views
         public LandingPage()
         {
             InitializeComponent();
-            _customerId = SessionManager.LoggedInCustomerId; // Retrieve logged-in customer ID
+            if (SessionManager.LoggedInCustomerId != null)
+                _customerId = (int)SessionManager.LoggedInCustomerId; // Retrieve logged-in customer ID
             LoadNotifications(); // Load notifications when the page is initialized
         }
 

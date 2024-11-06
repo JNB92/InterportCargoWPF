@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
 using InterportCargoWPF.Database;
 
@@ -8,7 +9,7 @@ namespace InterportCargoWPF.Views;
 ///     Represents the main window of the application, providing navigation and login functionality for employees and
 ///     customers.
 /// </summary>
-public partial class MainWindow : Window
+public sealed partial class MainWindow : Window
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="MainWindow" /> class and sets up the singleton instance.
@@ -145,8 +146,8 @@ public partial class MainWindow : Window
         BackButton.Visibility = Visibility.Visible;
         LogoutButton.Visibility = Visibility.Visible;
     }
-    
-    protected virtual void ShowErrorMessage(string message)
+
+    private void ShowErrorMessage(string message)
     {
         MessageBox.Show(message);
     }
@@ -155,19 +156,32 @@ public partial class MainWindow : Window
     /// </summary>
     private void LogoutButton_Click(object sender, RoutedEventArgs e)
     {
+        // Clear session data
+        SessionManager.LoggedInCustomerId = null;
+
+        // Clear login fields
         EmailBox.Text = string.Empty;
         PasswordBox.Password = string.Empty;
 
+        // Display logout message
         LogoutMessageTextBlock.Text = "You have been logged out.";
         LogoutMessageTextBlock.Visibility = Visibility.Visible;
 
+        // Reset visibility
         LoginForm.Visibility = Visibility.Visible;
         MainFrame.Visibility = Visibility.Collapsed;
 
         EmployeeLoginButton.Visibility = Visibility.Visible;
         BackButton.Visibility = Visibility.Collapsed;
         LogoutButton.Visibility = Visibility.Collapsed;
+
+        // Clear navigation history by creating a new Frame instance
+        var newFrame = new Frame { NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden, Visibility = Visibility.Collapsed };
+        MainFrameContainer.Children.Clear();  // Remove the old frame
+        MainFrameContainer.Children.Add(newFrame);  // Add the new frame
+        MainFrame = newFrame;  // Update the reference to the new frame
     }
+
 
     /// <summary>
     ///     Clears the logout message when the user starts entering credentials.

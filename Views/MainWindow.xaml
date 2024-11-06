@@ -32,8 +32,10 @@
                         Click="LogoutButton_Click" Visibility="Collapsed" />
             </Grid>
 
-            <!-- Frame for navigation (Initially hidden, but shown after login) -->
-            <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed" />
+            <!-- Frame container for navigation (Initially hidden, but shown after login) -->
+            <Grid x:Name="MainFrameContainer">
+                <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed" />
+            </Grid>
 
             <!-- Main Login Form (Initially visible) -->
             <Border x:Name="LoginForm" HorizontalAlignment="Center" VerticalAlignment="Center"

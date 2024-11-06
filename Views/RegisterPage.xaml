@@ -61,9 +61,6 @@
         </Border>
 
         <!-- Footer -->
-        <Grid Grid.Row="2" Height="50" Background="#E0E0E0">
-            <TextBlock Text="InterportCargo© 2024" VerticalAlignment="Center"
-                       HorizontalAlignment="Center" FontSize="10" />
-        </Grid>
+
     </Grid>
 </Page>
